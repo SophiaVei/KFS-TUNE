@@ -129,3 +129,4 @@ print(f'Test Time: {test_time}s')
 # Calculate total time
 total_time = time.time() - total_start_time
 print(f'Total time: {total_time}s')
+
