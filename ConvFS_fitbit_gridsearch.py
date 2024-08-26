@@ -1,15 +1,17 @@
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import RidgeClassifierCV
+from ConvFS_functions import generate_kernels, transform_and_select_features
+import time
 from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from imblearn.over_sampling import SMOTE, RandomOverSampler
-from sklearn.metrics import accuracy_score
-from sklearn.base import BaseEstimator, TransformerMixin
-from itertools import chain, combinations
+from itertools import combinations
+import random
+from scipy.sparse import issparse
 
 # Load the provided dataset
 file_path = 'daily_fitbit_surveys_semas.pkl'
@@ -37,11 +39,12 @@ y_encoded = label_encoder.fit_transform(y)
 categorical_columns = X.select_dtypes(include=['object', 'category']).columns.tolist()
 numeric_columns = X.select_dtypes(include=['number']).columns.tolist()
 
-# Convert categorical columns to strings to avoid mixed types
+# Ensure categorical columns are uniformly strings and numeric columns are floats
 X[categorical_columns] = X[categorical_columns].astype(str)
-
-# Convert numeric columns to float to ensure consistency
 X[numeric_columns] = X[numeric_columns].astype(float)
+
+# Store the available columns (both categorical and numerical)
+all_columns = categorical_columns + numeric_columns
 
 # Define the preprocessing for numeric and categorical data
 numeric_transformer = Pipeline(steps=[
@@ -51,86 +54,95 @@ numeric_transformer = Pipeline(steps=[
 
 categorical_transformer = Pipeline(steps=[
     ('imputer', SimpleImputer(strategy='most_frequent')),
-    ('encoder', OneHotEncoder(handle_unknown='ignore'))
+    ('encoder', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
 ])
 
-# Combine preprocessing steps
-preprocessor = ColumnTransformer(
-    transformers=[
-        ('num', numeric_transformer, numeric_columns),
-        ('cat', categorical_transformer, categorical_columns)
-    ]
-)
+# Function to preprocess and transform the dataset
+def preprocess_and_transform(selected_columns):
+    # Split selected columns into categorical and numerical subsets
+    selected_categorical = [col for col in selected_columns if col in categorical_columns]
+    selected_numerical = [col for col in selected_columns if col in numeric_columns]
 
-# Preprocess the entire dataset (train and test)
-X_preprocessed = preprocessor.fit_transform(X)
+    # Update preprocessing pipelines based on selected columns
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('num', numeric_transformer, selected_numerical),
+            ('cat', categorical_transformer, selected_categorical)
+        ]
+    )
 
-# Split the data into training and test sets (after preprocessing)
-X_train, X_test, y_train, y_test = train_test_split(X_preprocessed, y_encoded, test_size=0.3, random_state=42)
+    # Apply preprocessing
+    X_preprocessed = preprocessor.fit_transform(X[selected_columns])
 
-# Handle imbalance in the dataset using oversampling and SMOTE (now after preprocessing)
-ros = RandomOverSampler(random_state=42)
-X_resampled, y_resampled = ros.fit_resample(X_train, y_train)
+    # Handle imbalance in the dataset using oversampling and SMOTE
+    ros = RandomOverSampler(random_state=42)
+    X_resampled, y_resampled = ros.fit_resample(X_preprocessed, y_encoded)
 
-smote = SMOTE(random_state=42)
-X_balanced, y_balanced = smote.fit_resample(X_resampled, y_resampled)
+    smote = SMOTE(random_state=42)
+    X_balanced, y_balanced = smote.fit_resample(X_resampled, y_resampled)
 
-# Custom transformer for selecting specific columns (works on numeric columns)
-class ColumnSelector(BaseEstimator, TransformerMixin):
-    def __init__(self, columns=None):
-        self.columns = columns
+    # Split the balanced data into train and test sets
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_balanced, y_balanced, test_size=0.3, random_state=42
+    )
 
-    def fit(self, X, y=None):
-        return self
+    return X_train, X_test, y_train, y_test
 
-    def transform(self, X):
-        return X[:, self.columns]
-
-# Generator for all combinations of columns
-def all_combinations(columns):
-    # Create all combinations from 1 to len(columns)
-    for r in range(1, len(columns) + 1):
-        for combo in combinations(columns, r):
-            yield combo
-
-# Generate a list of column indices
-all_columns = list(range(X_preprocessed.shape[1]))
-
-# Initialize variables to store the best results
+# Store the best results
 best_accuracy = 0
-best_pipeline = None
 best_columns = None
 
-# Loop through the generator of all possible combinations of columns
-for columns in all_combinations(all_columns):
-    # Create a pipeline with column selection and classifier
-    selector = ColumnSelector(columns=columns)
-    pipeline = Pipeline(steps=[
-        ('selector', selector),
-        ('classifier', RidgeClassifierCV(alphas=np.logspace(-3, 3, 10)))
-    ])
+# Run grid search with random feature subsets
+n_trials = 100
+for i in range(n_trials):
+    # Randomly select a subset of features
+    selected_columns = random.sample(all_columns, k=random.randint(5, len(all_columns)))
+    print(f"Trial {i + 1}: Testing with {len(selected_columns)} features")
 
-    # Fit the pipeline on the training data
-    pipeline.fit(X_balanced, y_balanced)
+    # Preprocess and transform the dataset
+    X_train, X_test, y_train, y_test = preprocess_and_transform(selected_columns)
 
-    # Evaluate the pipeline on the test set
-    y_test_pred = pipeline.predict(X_test)
-    test_accuracy = accuracy_score(y_test, y_test_pred)
+    # Handle sparse matrices properly for calculating the series length
+    if issparse(X_train):
+        avg_series_length = np.mean([x.getnnz() for x in X_train])
+    else:
+        avg_series_length = np.mean([len(x) for x in X_train])
 
-    # Track the best pipeline
-    if test_accuracy > best_accuracy:
-        best_accuracy = test_accuracy
-        best_pipeline = pipeline
-        best_columns = columns
+    # Initialize total start time
+    start_time = time.time()
+
+    # Generate kernels and transform data
+    kernels = generate_kernels(X_train.shape[1], 10000, int(avg_series_length))
+    X_train_transformed, selector, best_num_features, scaler = transform_and_select_features(
+        X_train, kernels, y_train, is_train=True)
+
+    # Train classifier
+    classifier = RidgeClassifierCV(alphas=np.logspace(-3, 3, 10))
+    classifier.fit(X_train_transformed, y_train)
+
+    # Transform test data
+    X_test_transformed = transform_and_select_features(
+        X_test, kernels, selector=selector, scaler=scaler, is_train=False)
+
+    # Test classifier
+    predictions = classifier.predict(X_test_transformed)
+    accuracy = np.mean(predictions == y_test)
+
+    # Track the best result
+    if accuracy > best_accuracy:
+        best_accuracy = accuracy
+        best_columns = selected_columns
+
+    # Print result for this trial
+    print(f"Trial {i + 1} Accuracy: {accuracy:.4f} (Best Accuracy so far: {best_accuracy:.4f})")
+
+# Final results
+print(f"Best Accuracy: {best_accuracy}")
+print(f"Best Feature Subset: {best_columns}")
 
 # Save the best results to a CSV file
-best_columns_list = list(best_columns) if best_columns else []
 result = pd.DataFrame({
-    'Best Columns': [best_columns_list],
-    'Best Accuracy': [best_accuracy]
+    'Best Accuracy': [best_accuracy],
+    'Best Feature Subset': [best_columns]
 })
-
-result.to_csv('best_columns_and_accuracy.csv', index=False)
-
-print(f'Best columns: {best_columns}')
-print(f'Best test accuracy: {best_accuracy}')
+result.to_csv('best_feature_subset_results.csv', index=False)

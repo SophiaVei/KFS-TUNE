@@ -8,6 +8,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder
 from imblearn.over_sampling import SMOTE, RandomOverSampler
 from collections import Counter
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Load the provided dataset
 file_path = 'daily_fitbit_surveys_semas.pkl'
@@ -175,3 +177,54 @@ print(f'Test Time: {test_time}s')
 # Calculate total time
 total_time = time.time() - total_start_time
 print(f'Total time: {total_time}s')
+
+
+# 1. Plot Class Distribution Before and After Balancing
+
+# Before balancing
+fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+sns.barplot(x=list(class_distribution_filtered.keys()), y=list(class_distribution_filtered.values()), ax=axes[0])
+axes[0].set_title('Class Distribution Before Balancing')
+axes[0].set_xlabel('Class')
+axes[0].set_ylabel('Frequency')
+
+# After SMOTE
+sns.barplot(x=list(class_distribution_balanced.keys()), y=list(class_distribution_balanced.values()), ax=axes[1])
+axes[1].set_title('Class Distribution After SMOTE Balancing')
+axes[1].set_xlabel('Class')
+axes[1].set_ylabel('Frequency')
+
+plt.tight_layout()
+plt.show()
+
+# 2. Plot Time Spent on Each Step vs Accuracy
+
+# Creating a bar plot for timing
+timing_data = {
+    'Stage': ['Train Transformation', 'Training', 'Test Transformation', 'Testing'],
+    'Time (s)': [train_transform_time, training_time, test_transform_time, test_time]
+}
+
+timing_df = pd.DataFrame(timing_data)
+
+fig, ax1 = plt.subplots(figsize=(10, 6))
+sns.barplot(x='Stage', y='Time (s)', data=timing_df, ax=ax1)
+ax1.set_title('Time Spent on Each Stage')
+
+# Overlay accuracy as a separate plot
+ax2 = ax1.twinx()
+ax2.plot(timing_df['Stage'], [accuracy]*4, color='red', marker='o', label='Accuracy')
+ax2.set_ylabel('Accuracy')
+ax2.set_ylim(0, 1)
+ax2.legend(loc='upper left')
+
+plt.tight_layout()
+plt.show()
+
+# 3. Plot the Number of Features Used After Selection
+
+plt.figure(figsize=(8, 6))
+sns.barplot(x=['Selected Features'], y=[best_num_features])
+plt.title('Number of Features Used After Selection')
+plt.ylabel('Number of Features')
+plt.show()
