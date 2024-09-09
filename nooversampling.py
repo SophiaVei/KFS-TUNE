@@ -8,7 +8,6 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from imblearn.over_sampling import SMOTE, RandomOverSampler
 from collections import Counter
 
 # Load the provided dataset
@@ -97,16 +96,9 @@ all_feature_names = list(numeric_feature_names) + list(categorical_feature_names
 # Print the feature names
 print(f"Features used in the model: {all_feature_names}")
 
-# Handle imbalance in the dataset using oversampling and SMOTE
-ros = RandomOverSampler(random_state=42)
-X_resampled, y_resampled = ros.fit_resample(X_preprocessed, y_encoded)
-
-smote = SMOTE(random_state=42)
-X_balanced, y_balanced = smote.fit_resample(X_resampled, y_resampled)
-
-# Split the balanced data into train and test sets
+# Split the data into train and test sets
 X_train, X_test, y_train, y_test = train_test_split(
-    X_balanced, y_balanced, test_size=0.3, random_state=42
+    X_preprocessed, y_encoded, test_size=0.3, random_state=42
 )
 
 # Calculate the average series length
@@ -151,7 +143,6 @@ print(f'Test Time: {test_time}s')
 # Calculate total time
 total_time = time.time() - total_start_time
 print(f'Total time: {total_time}s')
-
 
 # Get the indices for females and males in the test set
 female_indices = (y_test == label_encoder.transform(['FEMALE'])[0])

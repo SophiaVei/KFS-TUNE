@@ -22,8 +22,8 @@ print(data.info())
 drop_columns = ['id', 'date']
 data = data.drop(columns=drop_columns)
 
-# Select 'mood' as the label
-label_column = 'mood'
+# Select 'gender' as the label
+label_column = 'gender'
 
 # Filter out rows with missing labels
 data = data.dropna(subset=[label_column])
