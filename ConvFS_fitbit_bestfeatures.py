@@ -22,14 +22,24 @@ print(data.info())
 drop_columns = ['id', 'date']
 data = data.drop(columns=drop_columns)
 
-# Select 'mood' as the label
-label_column = 'mood'
+# Select the specific features from the best feature subset
+feature_columns = [
+    'bmi', 'minutes_awake', 'stimulus_control_category', 'wrist_temperature', 'scl_avg',
+    'mindfulness_end_heart_rate', 'intellect', 'extraversion', 'age', 'exertion_points',
+    'exercise_duration', 'stability', 'mindfulness_start_heart_rate', 'minutes_to_fall_asleep',
+    'light', 'negative_affect_score', 'environmental_reevaluation_category',
+    'helping_relationships_category', 'oxygen_variation', 'water_amount', 'mood',
+    'heart_rate_alert', 'step_goal', 'ttm_stage', 'stress_score', 'nightly_temperature'
+]
+
+# Select 'gender' as the label
+label_column = 'gender'
 
 # Filter out rows with missing labels
 data = data.dropna(subset=[label_column])
 
 # Extract features and labels
-X = data.drop(columns=[label_column])
+X = data[feature_columns]
 y = data[label_column]
 
 # Print the data before preprocessing
@@ -58,7 +68,7 @@ numeric_transformer = Pipeline(steps=[
 
 categorical_transformer = Pipeline(steps=[
     ('imputer', SimpleImputer(strategy='most_frequent')),
-    ('encoder', OneHotEncoder(handle_unknown='ignore'))
+    ('encoder', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
 ])
 
 # Combine preprocessing steps
@@ -86,22 +96,6 @@ all_feature_names = list(numeric_feature_names) + list(categorical_feature_names
 
 # Print the feature names
 print(f"Features used in the model: {all_feature_names}")
-
-# Extract the columns for 'gender_FEMALE', 'gender_MALE', and 'gender_nan' from the preprocessed data
-gender_columns = ['gender_FEMALE', 'gender_MALE', 'gender_nan']
-
-# Convert X_preprocessed to a DataFrame to easily access the specific columns
-X_preprocessed_df = pd.DataFrame(X_preprocessed, columns=all_feature_names)
-
-# Count the number of occurrences for each gender category
-gender_counts = X_preprocessed_df[gender_columns].sum()
-
-# Print the results
-print(gender_counts)
-
-
-# Check the shape of the preprocessed data
-print(f"Shape of preprocessed data: {X_preprocessed.shape}")
 
 # Handle imbalance in the dataset using oversampling and SMOTE
 ros = RandomOverSampler(random_state=42)
@@ -157,4 +151,3 @@ print(f'Test Time: {test_time}s')
 # Calculate total time
 total_time = time.time() - total_start_time
 print(f'Total time: {total_time}s')
-
