@@ -17,6 +17,8 @@ from scipy.stats import pointbiserialr, chi2_contingency
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.inspection import permutation_importance
 from sklearn.feature_selection import mutual_info_classif
+import matplotlib.pyplot as plt
+print(plt.style.available)
 
 
 # Load the provided dataset
@@ -301,3 +303,105 @@ else:
 print(mi_df)
 
 
+
+
+
+
+import matplotlib.pyplot as plt
+print(plt.style.available)
+# Function to style and format the plots for a modern look
+def fancy_plot_style():
+    plt.style.use('ggplot')  # 'ggplot' is widely available
+    plt.rcParams.update({
+        'font.size': 12,
+        'axes.titlesize': 14,
+        'axes.labelsize': 12,
+        'xtick.labelsize': 10,
+        'ytick.labelsize': 10,
+        'legend.fontsize': 10,
+        'figure.figsize': (10, 6),
+        'axes.edgecolor': '#333333',  # Darker edge color for axes
+        'grid.color': '#cccccc',  # Light grid lines
+        'grid.linewidth': 0.5,    # Thinner grid lines
+        'axes.spines.top': False,  # Remove top spine for a cleaner look
+        'axes.spines.right': False,  # Remove right spine for a cleaner look
+        'axes.spines.left': False,   # Modern look: no left spine
+        'axes.spines.bottom': False  # Modern look: no bottom spine
+    })
+
+# Apply the fancy plot styling
+fancy_plot_style()
+
+### Plot 1: Gender Misclassification Percentage (Modern Bar Chart)
+labels = ['Females', 'Males']
+misclassification_percentages = [female_misclassification_percent, male_misclassification_percent]
+
+plt.figure(figsize=(8, 6))
+plt.bar(labels, misclassification_percentages, color=['#6EC5E9', '#66C2A5'], edgecolor='none', linewidth=1.2)
+plt.ylabel('Misclassification Percentage (%)', fontweight='bold')
+plt.title('Gender Misclassification Percentage', fontsize=16, fontweight='bold')
+
+# Adding value labels on the bars
+for i, v in enumerate(misclassification_percentages):
+    plt.text(i, v + 0.5, f"{v:.2f}%", ha='center', fontweight='bold', fontsize=12, color='black')
+
+plt.ylim(0, max(misclassification_percentages) + 5)
+plt.tight_layout()
+plt.show()
+
+### Plot 2: Confusion Matrix (Modern Heatmap with 2 Shades)
+conf_matrix = confusion_matrix(y_test, predictions)
+
+plt.figure(figsize=(6, 5))
+# Use only two color shades (light blue and dark blue)
+sns.heatmap(conf_matrix, annot=True, fmt="d", cmap=sns.light_palette("#66C2A5", as_cmap=True), linewidths=0.5, linecolor='white',
+            cbar_kws={'label': 'Count'}, xticklabels=['Female', 'Male'], yticklabels=['Female', 'Male'])
+plt.title('Confusion Matrix', fontsize=16, fontweight='bold')
+plt.ylabel('Actual Label', fontweight='bold')
+plt.xlabel('Predicted Label', fontweight='bold')
+plt.tight_layout()
+plt.show()
+
+### Plot 3: Precision, Recall, and F1-Score (Modern Bar Chart)
+metrics_df.plot(kind='bar', figsize=(8, 6), ylim=(0, 1), color=['#FF6F61', '#6EC5E9', '#66C2A5'], edgecolor='none', linewidth=1.2)
+plt.title('Precision, Recall, F1-Score for Gender', fontsize=16, fontweight='bold')
+plt.ylabel('Score', fontweight='bold')
+
+# Rotate x-axis labels slightly for readability
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+
+### Plot 4: ROC Curve (Modern with Minimalist Design)
+plt.figure(figsize=(8, 6))
+plt.plot(fpr, tpr, color='#6EC5E9', label=f'ROC Curve (AUC = {roc_auc:.2f})', lw=2)
+plt.plot([0, 1], [0, 1], color='gray', linestyle='--', lw=2)
+plt.title('ROC Curve', fontsize=16, fontweight='bold')
+plt.xlabel('False Positive Rate', fontweight='bold')
+plt.ylabel('True Positive Rate', fontweight='bold')
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+### Plot 5: Top 20 Feature Importance (Modern Bar Chart)
+plt.figure(figsize=(12, 6))
+ax = importances.sort_values(ascending=False).head(20).plot(kind='bar', color='#6EC5E9', edgecolor='none', linewidth=1.2)
+plt.title("Top 20 Feature Importance", fontsize=16, fontweight='bold')
+plt.ylabel('Importance Score', fontweight='bold')
+plt.xlabel('Feature')  # Adding label for x-axis
+
+# Rotate the x-axis labels for better readability
+ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
+
+### Plot 6: Top 20 Mutual Information Scores (Modern Bar Chart)
+plt.figure(figsize=(12, 6))
+ax = mi_df.head(20).plot(kind='bar', x='Feature', y='Mutual Information', color='#66C2A5', edgecolor='none', linewidth=1.2)
+plt.title("Top 20 Mutual Information Scores", fontsize=16, fontweight='bold')
+plt.ylabel('Mutual Information', fontweight='bold')
+
+# Rotate the x-axis labels for better readability
+ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+plt.tight_layout()
+plt.show()
