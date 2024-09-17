@@ -8,8 +8,15 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from imblearn.over_sampling import SMOTE, RandomOverSampler
 from collections import Counter
+import matplotlib.pyplot as plt
+from sklearn.metrics import confusion_matrix, classification_report, precision_recall_fscore_support
+import seaborn as sns
+from scipy.stats import pointbiserialr, chi2_contingency
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.inspection import permutation_importance
+from sklearn.feature_selection import mutual_info_classif
+from imblearn.over_sampling import SMOTE  # Import SMOTE for oversampling
 
 # Load the provided dataset
 file_path = 'daily_fitbit_surveys_semas.pkl'
@@ -21,6 +28,13 @@ print(data.info())
 # Drop columns that are unsuitable for model training (e.g., ID, dates)
 drop_columns = ['id', 'date']
 data = data.drop(columns=drop_columns)
+
+# Replace NaN values in the 'gender' column with "Prefer not to say"
+data['gender'] = data['gender'].fillna("Prefer not to say")
+
+# Check unique values in the 'gender' column before encoding
+print("Unique values in 'gender' column before encoding:")
+print(data['gender'].unique())
 
 # Select the specific features from the best feature subset
 feature_columns = [
@@ -35,9 +49,6 @@ feature_columns = [
 # Select 'gender' as the label
 label_column = 'gender'
 
-# Filter out rows with missing labels
-data = data.dropna(subset=[label_column])
-
 # Extract features and labels
 X = data[feature_columns]
 y = data[label_column]
@@ -46,7 +57,7 @@ y = data[label_column]
 print("Data before preprocessing:")
 print(X.head())
 
-# Encode the labels
+# Encode the labels (including the new "Prefer not to say" class)
 label_encoder = LabelEncoder()
 y_encoded = label_encoder.fit_transform(y)
 
@@ -94,20 +105,24 @@ categorical_feature_names = preprocessor.named_transformers_['cat'].named_steps[
 # Combine numeric and categorical feature names
 all_feature_names = list(numeric_feature_names) + list(categorical_feature_names)
 
+# Check the length of all_feature_names and make sure it matches the transformed data
+print(f"Number of features: {len(all_feature_names)}")
+print(f"Shape of transformed data: {X_preprocessed.shape[1]}")
+
 # Print the feature names
 print(f"Features used in the model: {all_feature_names}")
 
-# Handle imbalance in the dataset using oversampling and SMOTE
-ros = RandomOverSampler(random_state=42)
-X_resampled, y_resampled = ros.fit_resample(X_preprocessed, y_encoded)
-
-smote = SMOTE(random_state=42)
-X_balanced, y_balanced = smote.fit_resample(X_resampled, y_resampled)
-
-# Split the balanced data into train and test sets
+# Split the data into train and test sets
 X_train, X_test, y_train, y_test = train_test_split(
-    X_balanced, y_balanced, test_size=0.3, random_state=42
+    X_preprocessed, y_encoded, test_size=0.3, random_state=42
 )
+
+# Apply SMOTE to balance the training set
+smote = SMOTE(random_state=42)
+X_train_smote, y_train_smote = smote.fit_resample(X_train, y_train)
+
+# Print the class distribution after applying SMOTE
+print(f"Class distribution after SMOTE: {Counter(y_train_smote)}")
 
 # Calculate the average series length
 avg_series_length = np.mean([len(x) for x in X_train])
@@ -117,15 +132,15 @@ total_start_time = time.time()
 
 # Start time measurement for train transformation
 start_time = time.time()
-kernels = generate_kernels(X_train.shape[1], 10000, int(avg_series_length))
+kernels = generate_kernels(X_train_smote.shape[1], 10000, int(avg_series_length))
 X_train_transformed, selector, best_num_features, scaler = transform_and_select_features(
-    X_train, kernels, y_train, is_train=True)
+    X_train_smote, kernels, y_train_smote, is_train=True)
 train_transform_time = time.time() - start_time
 
 # Train classifier
 start_time = time.time()
 classifier = RidgeClassifierCV(alphas=np.logspace(-3, 3, 10))
-classifier.fit(X_train_transformed, y_train)
+classifier.fit(X_train_transformed, y_train_smote)
 training_time = time.time() - start_time
 
 # Start time measurement for test transformation
@@ -147,6 +162,9 @@ print(f'Training Transformation Time: {train_transform_time}s')
 print(f'Training Time: {training_time}s')
 print(f'Test Transformation Time: {test_transform_time}s')
 print(f'Test Time: {test_time}s')
+
+# Continue with misclassification percentages and other plots as before
+
 
 # Calculate total time
 total_time = time.time() - total_start_time
