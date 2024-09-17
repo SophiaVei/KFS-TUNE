@@ -195,17 +195,6 @@ for i, v in enumerate(misclassification_percentages):
 
 plt.show()
 
-# 1. Confusion Matrix (include "Prefer not to say")
-conf_matrix = confusion_matrix(y_test, predictions)
-plt.figure(figsize=(6, 4))
-sns.heatmap(conf_matrix, annot=True, fmt="d", cmap="Blues",
-            xticklabels=['Female', 'Male', 'Prefer not to say'],
-            yticklabels=['Female', 'Male', 'Prefer not to say'])
-plt.title('Confusion Matrix')
-plt.ylabel('Actual Label')
-plt.xlabel('Predicted Label')
-plt.show()
-
 # 2. Classification Report (include "Prefer not to say")
 class_report = classification_report(y_test, predictions, target_names=['Female', 'Male', 'Prefer not to say'])
 print("Classification Report:\n", class_report)
