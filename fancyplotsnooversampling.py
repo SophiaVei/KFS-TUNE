@@ -186,8 +186,8 @@ misclassification_percentages = [female_misclassification_percent, male_misclass
 
 plt.figure(figsize=(8, 6))
 plt.bar(labels, misclassification_percentages, color=['#FF9999', '#66B3FF', '#A9A9A9'])
-plt.ylabel('Misclassification Percentage (%)')
-plt.title('Gender Misclassification Percentage')
+plt.ylabel('Misclassification Percentage (%)', fontweight='bold', fontsize=18)
+#plt.title('Gender Misclassification Percentage')
 
 # Adding value labels on the bars
 for i, v in enumerate(misclassification_percentages):
@@ -215,65 +215,57 @@ plt.show()
 
 # Function to style and format the plots for a modern look
 def fancy_plot_style():
+    # Function to style and format the plots
     plt.style.use('ggplot')  # 'ggplot' is widely available
     plt.rcParams.update({
         'font.size': 12,
         'axes.titlesize': 14,
         'axes.labelsize': 12,
-        'xtick.labelsize': 10,
-        'ytick.labelsize': 10,
+        'xtick.labelsize': 12,  # Adjust tick size to match label size (not bold)
+        'ytick.labelsize': 12,
         'legend.fontsize': 10,
         'figure.figsize': (10, 6),
         'axes.edgecolor': '#333333',  # Darker edge color for axes
         'grid.color': '#cccccc',  # Light grid lines
-        'grid.linewidth': 0.5,    # Thinner grid lines
+        'grid.linewidth': 0.5,  # Thinner grid lines
         'axes.spines.top': False,  # Remove top spine for a cleaner look
         'axes.spines.right': False,  # Remove right spine for a cleaner look
-        'axes.spines.left': False,   # Modern look: no left spine
+        'axes.spines.left': False,  # Modern look: no left spine
         'axes.spines.bottom': False  # Modern look: no bottom spine
     })
 
-# Apply the fancy plot styling
 fancy_plot_style()
 
-### Plot 1: Gender Misclassification Percentage (Modern Bar Chart)
-labels = ['Females', 'Males', 'Prefer Not to Say']
-misclassification_percentages = [female_misclassification_percent, male_misclassification_percent, prefer_not_say_misclassification_percent]
-
+# Adjusting all plots
 plt.figure(figsize=(8, 6))
 plt.bar(labels, misclassification_percentages, color=['#6EC5E9', '#66C2A5', '#A9A9A9'], edgecolor='none', linewidth=1.2)
-plt.ylabel('Misclassification Percentage (%)', fontweight='bold')
-plt.title('Gender Misclassification Percentage', fontsize=16, fontweight='bold')
-
-# Adding value labels on the bars
-for i, v in enumerate(misclassification_percentages):
-    plt.text(i, v + 0.5, f"{v:.2f}%", ha='center', fontweight='bold', fontsize=12, color='black')
-
+plt.ylabel('Misclassification Percentage (%)', fontweight='bold', fontsize=18)
+plt.xticks(fontsize=20)  # Adjust tick size
+plt.yticks(fontsize=20)  # Adjust tick size
 plt.ylim(0, max(misclassification_percentages) + 5)
 plt.tight_layout()
 plt.show()
 
+
 ### Plot 2: Confusion Matrix (Modern Heatmap with 2 Shades)
 conf_matrix = confusion_matrix(y_test, predictions)
-
-plt.figure(figsize=(6, 5))
-# Use only two color shades (light blue and dark blue)
+# Confusion Matrix
+plt.figure(figsize=(8, 7), facecolor='none')
 sns.heatmap(conf_matrix, annot=True, fmt="d", cmap=sns.light_palette("#66C2A5", as_cmap=True), linewidths=0.5, linecolor='white',
             cbar_kws={'label': 'Count'}, xticklabels=['Female', 'Male', 'Prefer not to say'],
             yticklabels=['Female', 'Male', 'Prefer not to say'])
-plt.title('Confusion Matrix', fontsize=16, fontweight='bold')
-plt.ylabel('Actual Label', fontweight='bold')
-plt.xlabel('Predicted Label', fontweight='bold')
+plt.xticks(fontsize=20)
+plt.yticks(fontsize=20)
 plt.tight_layout()
 plt.show()
 
-### Plot 3: Precision, Recall, and F1-Score (Modern Bar Chart)
-metrics_df.plot(kind='bar', figsize=(8, 6), ylim=(0, 1), color=['#FF6F61', '#6EC5E9', '#66C2A5'], edgecolor='none', linewidth=1.2)
-plt.title('Precision, Recall, F1-Score for Gender', fontsize=16, fontweight='bold')
-plt.ylabel('Score', fontweight='bold')
 
-# Rotate x-axis labels slightly for readability
-plt.xticks(rotation=45, ha='right')
+### Plot 3: Precision, Recall, and F1-Score (Modern Bar Chart)
+# Precision, Recall, and F1-Score
+metrics_df.plot(kind='bar', figsize=(8, 6), ylim=(0, 1), color=['#FF6F61', '#6EC5E9', '#66C2A5'], edgecolor='none', linewidth=1.2)
+plt.xticks(rotation=45, ha='right', fontsize=20)
+plt.yticks(fontsize=20)
+plt.ylabel('Score', fontweight='bold', fontsize=22)
 plt.tight_layout()
 plt.show()
 
@@ -285,11 +277,14 @@ rf.fit(X_preprocessed, y_encoded)
 # Get feature importances from the trained RandomForest model
 importances = pd.Series(rf.feature_importances_, index=all_feature_names)
 # Plot top 20 feature importance with modern style
-plt.figure(figsize=(12, 6))
+plt.figure(figsize=(14, 8))
 ax = importances.sort_values(ascending=False).head(20).plot(kind='bar', color='#6EC5E9', edgecolor='none', linewidth=1.2)
-plt.title("Top 20 Feature Importance", fontsize=16, fontweight='bold')
-plt.ylabel('Importance Score', fontweight='bold')
-plt.xlabel('Feature')  # Adding label for x-axis
+plt.ylabel('Importance Score', fontweight='bold', fontsize=22)
+plt.xlabel('Feature', fontweight='bold', fontsize=22)
+ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right', fontsize=20)
+plt.yticks(fontsize=20)
+plt.tight_layout()
+plt.show()
 
 # Rotate the x-axis labels for better readability
 ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
@@ -299,25 +294,23 @@ plt.show()
 ### Plot 5: Mutual Information (Modern Bar Chart, if applicable)
 # Calculate mutual information
 mi = mutual_info_classif(X_preprocessed, y_encoded)
-
-# Ensure mutual information values and feature names are aligned
+# Mutual Information
 if len(mi) == len(all_feature_names):
-    # Create a dataframe to display the results
+    plt.figure(figsize=(18, 18))
     mi_df = pd.DataFrame({'Feature': all_feature_names, 'Mutual Information': mi})
     mi_df = mi_df.sort_values(by='Mutual Information', ascending=False)
-
-    # Plot mutual information
-    plt.figure(figsize=(12, 6))
     ax = mi_df.head(20).plot(kind='bar', x='Feature', y='Mutual Information', color='#66C2A5', edgecolor='none', linewidth=1.2)
-    plt.title("Top 20 Mutual Information Scores", fontsize=16, fontweight='bold')
-    plt.ylabel('Mutual Information', fontweight='bold')
+    plt.ylabel('Mutual Information', fontweight='bold', fontsize=22)
+    plt.xlabel('Feature', fontweight='bold', fontsize=22)
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right', fontsize=19)
 
-    # Rotate the x-axis labels for better readability
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha='right')
+    plt.yticks(fontsize=19)
     plt.tight_layout()
+
     plt.show()
 else:
     print(f"Mismatch between mutual information length ({len(mi)}) and feature names length ({len(all_feature_names)})")
+
 
 # Print the MI dataframe for review
 print(mi_df)

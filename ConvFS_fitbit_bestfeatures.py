@@ -205,8 +205,8 @@ misclassification_percentages = [female_misclassification_percent, male_misclass
 plt.figure(figsize=(8, 6))
 plt.bar(labels, misclassification_percentages, color=['#FF9999', '#66B3FF', '#A9A9A9'])
 plt.ylabel('Misclassification Percentage (%)')
-plt.title('Gender Misclassification Percentage')
-
+"""plt.title('Gender Misclassification Percentage')
+"""
 # Adding value labels on the bars
 for i, v in enumerate(misclassification_percentages):
     plt.text(i, v + 0.5, f"{v:.2f}%", ha='center', fontweight='bold')
@@ -226,7 +226,8 @@ metrics_df = pd.DataFrame({
     'F1-Score': f1
 }, index=['Female', 'Male', 'Prefer not to say'])
 
-metrics_df.plot(kind='bar', figsize=(8, 6), ylim=(0, 1), title='Precision, Recall, F1-Score for Gender')
+"""metrics_df.plot(kind='bar', figsize=(8, 6), ylim=(0, 1), title='Precision, Recall, F1-Score for Gender')
+"""
 plt.ylabel('Score')
 plt.show()
 
@@ -262,8 +263,8 @@ misclassification_percentages = [female_misclassification_percent, male_misclass
 plt.figure(figsize=(8, 6))
 plt.bar(labels, misclassification_percentages, color=['#6EC5E9', '#66C2A5', '#A9A9A9'], edgecolor='none', linewidth=1.2)
 plt.ylabel('Misclassification Percentage (%)', fontweight='bold')
-plt.title('Gender Misclassification Percentage', fontsize=16, fontweight='bold')
-
+"""plt.title('Gender Misclassification Percentage', fontsize=16, fontweight='bold')
+"""
 # Adding value labels on the bars
 for i, v in enumerate(misclassification_percentages):
     plt.text(i, v + 0.5, f"{v:.2f}%", ha='center', fontweight='bold', fontsize=12, color='black')
@@ -280,7 +281,8 @@ plt.figure(figsize=(6, 5))
 sns.heatmap(conf_matrix, annot=True, fmt="d", cmap=sns.light_palette("#66C2A5", as_cmap=True), linewidths=0.5, linecolor='white',
             cbar_kws={'label': 'Count'}, xticklabels=['Female', 'Male', 'Prefer not to say'],
             yticklabels=['Female', 'Male', 'Prefer not to say'])
-plt.title('Confusion Matrix', fontsize=16, fontweight='bold')
+"""plt.title('Confusion Matrix', fontsize=16, fontweight='bold')
+"""
 plt.ylabel('Actual Label', fontweight='bold')
 plt.xlabel('Predicted Label', fontweight='bold')
 plt.tight_layout()
@@ -288,7 +290,8 @@ plt.show()
 
 ### Plot 3: Precision, Recall, and F1-Score (Modern Bar Chart)
 metrics_df.plot(kind='bar', figsize=(8, 6), ylim=(0, 1), color=['#FF6F61', '#6EC5E9', '#66C2A5'], edgecolor='none', linewidth=1.2)
-plt.title('Precision, Recall, F1-Score for Gender', fontsize=16, fontweight='bold')
+"""plt.title('Precision, Recall, F1-Score for Gender', fontsize=16, fontweight='bold')
+"""
 plt.ylabel('Score', fontweight='bold')
 
 # Rotate x-axis labels slightly for readability
@@ -306,7 +309,8 @@ importances = pd.Series(rf.feature_importances_, index=all_feature_names)
 # Plot top 20 feature importance with modern style
 plt.figure(figsize=(12, 6))
 ax = importances.sort_values(ascending=False).head(20).plot(kind='bar', color='#6EC5E9', edgecolor='none', linewidth=1.2)
-plt.title("Top 20 Feature Importance", fontsize=16, fontweight='bold')
+"""plt.title("Top 20 Feature Importance", fontsize=16, fontweight='bold')
+"""
 plt.ylabel('Importance Score', fontweight='bold')
 plt.xlabel('Feature')  # Adding label for x-axis
 
@@ -328,7 +332,7 @@ if len(mi) == len(all_feature_names):
     # Plot mutual information
     plt.figure(figsize=(12, 6))
     ax = mi_df.head(20).plot(kind='bar', x='Feature', y='Mutual Information', color='#66C2A5', edgecolor='none', linewidth=1.2)
-    plt.title("Top 20 Mutual Information Scores", fontsize=16, fontweight='bold')
+    #plt.title("Top 20 Mutual Information Scores", fontsize=16, fontweight='bold')
     plt.ylabel('Mutual Information', fontweight='bold')
 
     # Rotate the x-axis labels for better readability
