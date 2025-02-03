@@ -256,6 +256,8 @@ sns.heatmap(conf_matrix, annot=True, fmt="d", cmap=sns.light_palette("#66C2A5", 
             yticklabels=['Female', 'Male', 'Prefer not to say'])
 plt.xticks(fontsize=20)
 plt.yticks(fontsize=20)
+plt.ylabel('Actual Label', fontweight='bold')
+plt.xlabel('Predicted Label', fontweight='bold')
 plt.tight_layout()
 plt.show()
 
