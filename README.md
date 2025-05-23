@@ -53,7 +53,7 @@ We use numerous datasets to evaluate 21 classifiers which we separate in 6 categ
   We additionally provide scripts using all the previously mentioned algorithms at once in all datasets so that the user can have a clear comparison of the algorithms.
 
   
-### 1. Systematic evaluation on various datasets:
+### 2. Systematic evaluation on various datasets:
 #### UCR Archive
 The datasets are organized based on dimensions (univariate or multivarite). All dataset forms (sensors, ECGs, sound, image, etc) are already transformed in time series format in this case. This is a very important part of our evaluation, since UCR is the SOTA repository to test time series classification algorithms.
     
