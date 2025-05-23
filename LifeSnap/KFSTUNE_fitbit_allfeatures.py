@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import RidgeClassifierCV
-from ConvFS_functions import generate_kernels, transform_and_select_features
+from KFSTUNE_functions import generate_kernels, transform_and_select_features
 import time
 from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer

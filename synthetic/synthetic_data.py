@@ -1,10 +1,10 @@
-import numpy as np
-import pandas as pd
 from sklearn.linear_model import RidgeClassifierCV
-import matplotlib.pyplot as plt
 from ast import literal_eval
 import time
-
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def load_dataset(filename):
@@ -175,10 +175,6 @@ def main():
 if __name__ == "__main__":
     main()
 
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 # ----------------------------------------------------------
 # 1) Set a modern style & context

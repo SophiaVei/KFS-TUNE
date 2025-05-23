@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import RidgeClassifierCV
-from ConvFS_functions import (
+from KFSTUNE_functions import (
     generate_kernels, transform_and_select_features, scorers
 )
 import time
