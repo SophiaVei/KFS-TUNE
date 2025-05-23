@@ -1,126 +1,192 @@
+"""
+ConvFS_functions.py  ––  core utilities for KFS-TUNE / ConvFS
+-------------------------------------------------------------
+
+• generate_kernels(...)             → random 1-D convolutional kernel bank
+• apply_kernels(X, kernels)         → Numba-JIT feature-map extractor
+• transform_and_select_features(...)→ kernel transform + scaling + K-best FS
+
+The module is intentionally light-weight: import it in your training /
+evaluation scripts and decide there which scorer (chi², MI, ANOVA …) you
+want to use.
+"""
+
 import numpy as np
 from numba import njit, prange
-from sklearn.feature_selection import SelectKBest, chi2, mutual_info_classif
+from sklearn.feature_selection import SelectKBest, chi2, mutual_info_classif, f_classif
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.model_selection import StratifiedKFold, cross_val_score
-from sklearn.linear_model import RidgeClassifierCV
 
+# ----------------------------------------------------------------------
+# scorer shortcut dictionary – pick the one you want in your pipeline
+# ----------------------------------------------------------------------
+scorers = {
+    "chi2":   chi2,
+    "mi":     mutual_info_classif,   # mutual information
+    "anova":  f_classif              # 1-way ANOVA F-test
+}
 
-def transform_and_select_features(X, kernels, y=None, num_features=500, selector=None, scaler=None, is_train=True):
-    """
-    Transforms the dataset using kernels and performs feature selection.
-    Args:
-    - X: Dataset to be transformed.
-    - kernels: Pre-generated kernels.
-    - y: Target labels (required for training set).
-    - num_features: Number of features to select (fixed, based on prior knowledge).
-    - selector: The fitted SelectKBest object (required for test set).
-    - scaler: The MinMaxScaler object (required for test set).
-    - is_train: Boolean indicating if the dataset is a training set.
-    Returns:
-    - X_transformed: Transformed and feature-selected dataset.
-    - Additional returns for training set: selector, best_num_features, scaler
-    """
-
-    X_transformed = apply_kernels(X, kernels)
-
-    if is_train:
-        # Scale the transformed data
-        scaler = MinMaxScaler()
-        X_scaled = scaler.fit_transform(X_transformed)
-
-        # Select the top 'num_features' features using SelectKBest
-        selector = SelectKBest(chi2, k=num_features)
-        X_selected = selector.fit_transform(X_scaled, y)
-
-        return X_selected, selector, num_features, scaler
-    else:
-        if scaler is not None and selector is not None:
-            # Scale and transform the test data using the trained scaler and selector
-            X_scaled = scaler.transform(X_transformed)
-            X_selected = selector.transform(X_scaled)
-            return X_selected
-        else:
-            raise ValueError("Scaler and selector must be provided for test set.")
-
-
+# ----------------------------------------------------------------------
+# 1. SAFE kernel generator
+# ----------------------------------------------------------------------
 @njit
-def generate_kernels(input_length, num_kernels, avg_series_length):
-    # Dynamically select candidate lengths based on average series length
-    candidate_lengths =  np.array((7, 9, 11), dtype=np.int32)
-    #candidate_lengths =  np.array((10, 15, 20), dtype=np.int32)
-    #candidate_lengths = np.array((7, 9, 11), dtype=np.int32) if avg_series_length < 200 else np.array((10, 15, 20), dtype=np.int32)
-    lengths = np.random.choice(candidate_lengths, num_kernels)
-    weights = np.zeros(lengths.sum(), dtype=np.float64)
-    biases = np.zeros(num_kernels, dtype=np.float64)
-    dilations = np.zeros(num_kernels, dtype=np.int32)
-    paddings = np.zeros(num_kernels, dtype=np.int32)
+def generate_kernels(input_length: int,
+                     num_kernels: int,
+                     avg_series_length: int):
+    """
+    Return a kernel bank where every kernel satisfies
+        (length-1)*dilation <= input_length + 2*padding
+    so that out_len is always ≥ 1.
+    """
+    candidate_lengths = np.array((7, 9, 11), dtype=np.int32)
 
-    a1 = 0
+    lengths   = np.empty(num_kernels,        dtype=np.int32)
+    biases    = np.empty(num_kernels,        dtype=np.float64)
+    dilations = np.empty(num_kernels,        dtype=np.int32)
+    paddings  = np.empty(num_kernels,        dtype=np.int32)
+
+    # first choose all lengths so we know the total weight buffer size
     for i in range(num_kernels):
-        _length = lengths[i]
-        _weights = np.random.normal(0, 1, _length) # Weights sampled from a normal distribution
-        b1 = a1 + _length
-        weights[a1:b1] = _weights - _weights.mean() # Mean-centering the weights
-        biases[i] = np.random.uniform(-1, 1) # Bias sampled from a uniform distribution
-        dilation = 2 ** np.random.uniform(0, np.log2((input_length - 1) / (_length - 1)))
-        dilations[i] = np.int32(dilation) # Dilation determined through exponential sampling
-        padding = ((_length - 1) * dilation) // 2 if np.random.randint(2) == 1 else 0
-        paddings[i] = padding # Padding applied based on a random decision
-        a1 = b1
+        lengths[i] = np.random.choice(candidate_lengths)
+
+    weights = np.empty(lengths.sum(), dtype=np.float64)
+
+    w_ptr = 0
+    for i in range(num_kernels):
+        k_len = lengths[i]
+
+        # -------- dilation & padding selected until the constraint is met
+        while True:
+            dil  = 2 ** np.random.uniform(
+                       0, np.log2((input_length-1)/(k_len-1)))
+            dil  = np.int32(dil)
+            pad  = ((k_len-1) * dil) // 2 if np.random.randint(2) else 0
+            if (k_len-1)*dil <= input_length + 2*pad:
+                break                     # ✅ valid
+        dilations[i] = dil
+        paddings[i]  = pad
+
+        # -------- weights / bias
+        w = np.random.normal(0., 1., k_len)
+        w -= w.mean()
+        weights[w_ptr:w_ptr+k_len] = w
+        w_ptr += k_len
+
+        biases[i] = np.random.uniform(-1., 1.)
 
     return weights, lengths, biases, dilations, paddings
 
-
+# ----------------------------------------------------------------------
+# 2. _apply_kernel_1d — safeguard against out_len <= 0 just in case
+# ----------------------------------------------------------------------
 @njit(fastmath=True)
-def apply_kernel(X, weights, length, bias, dilation, padding):
-    input_length = len(X)
-    output_length = (input_length + (2 * padding)) - ((length - 1) * dilation)
-    _ppv = 0
-    _max = np.NINF
-    _sum_values = np.empty(output_length, dtype=np.float64)  # Array to hold the sum values for std dev calculation
+def _apply_kernel_1d(x, weights, length, bias, dilation, padding):
+    n = len(x)
+    out_len = (n + 2*padding) - (length-1)*dilation
+    if out_len <= 0:                       # <- shouldn’t happen any more,
+        return 0., -np.inf, 0.            #    but stay defensive
 
-    end = (input_length + padding) - ((length - 1) * dilation)
-    index_counter = 0  # Counter to keep track of the index in the _sum_values array
+    max_val   = -np.inf
+    ppv_count = 0
+    activ     = np.empty(out_len, dtype=np.float64)
 
-    for i in range(-padding, end):
-        _sum = bias
-        index = i
+    idx_out = 0
+    last_i  = (n + padding) - (length-1)*dilation
+    for i in range(-padding, last_i):
+        s = bias
+        p = i
         for j in range(length):
-            if index > -1 and index < input_length:
-                _sum = _sum + weights[j] * X[index]
-            index = index + dilation
-        if _sum > _max:
-            _max = _sum
-        if _sum > 0:
-            _ppv += 1
-        _sum_values[index_counter] = _sum
-        index_counter += 1
+            if 0 <= p < n:
+                s += weights[j] * x[p]
+            p += dilation
+        max_val   = s if s > max_val else max_val
+        ppv_count += 1 if s > 0. else 0
+        activ[idx_out] = s
+        idx_out += 1
 
-    _std_dev = np.std(_sum_values)  # Calculate the standard deviation of the activation map
-    return _ppv / output_length, _max, _std_dev
+    return ppv_count / out_len, max_val, np.std(activ)
 
 
-@njit("float64[:,:](float64[:,:], Tuple((float64[::1], int32[:], float64[:], int32[:], int32[:])))", parallel=True, fastmath=True)
+# ----------------------------------------------------------------------
+# 3. apply_kernels  (compile *without* parallel first)
+# ----------------------------------------------------------------------
+@njit(
+    "float64[:,:](float64[:,:], "
+    "Tuple((float64[::1], int32[:], float64[:], int32[:], int32[:])))",
+    parallel=False,  # switch back to True later if you want
+    fastmath=True)
 def apply_kernels(X, kernels):
     weights, lengths, biases, dilations, paddings = kernels
-    num_examples, _ = X.shape
-    num_kernels = len(lengths)
-    num_features_per_kernel = 3  # Adding std deviation feature
-    transformed_X = np.zeros((num_examples, num_kernels * num_features_per_kernel), dtype=np.float64)
+    n_samples, _      = X.shape
+    n_kernels         = len(lengths)
+    feats_per_kernel  = 3
 
-    for i in prange(num_examples):
-        a1 = 0  # for weights
-        a2 = 0  # for features
+    Z = np.empty((n_samples, n_kernels*feats_per_kernel), dtype=np.float64)
 
-        for j in range(num_kernels):
-            b1 = a1 + lengths[j]
-            b2 = a2 + num_features_per_kernel
+    for i in range(n_samples):
+        w_ptr = 0
+        f_ptr = 0
+        for k in range(n_kernels):
+            k_len = lengths[k]
+            ppv, mx, sd = _apply_kernel_1d(
+                X[i],
+                weights[w_ptr:w_ptr+k_len],
+                k_len,
+                biases[k],
+                dilations[k],
+                paddings[k]
+            )
+            Z[i, f_ptr:f_ptr+3] = (ppv, mx, sd)
+            w_ptr += k_len
+            f_ptr += feats_per_kernel
+    return Z
+# ----------------------------------------------------------------------
+# 4. transform + (optional) feature selection wrapper
+# ----------------------------------------------------------------------
+def transform_and_select_features(
+    X, kernels, *,
+    y=None,
+    num_features=500,
+    score_func=chi2,
+    selector=None,
+    scaler=None,
+    is_train=True
+):
+    """
+    Kernel transform  ➔  scaling  ➔  K-best selection (train / test mode).
 
-            ppv, max_val, std_dev = apply_kernel(X[i], weights[a1:b1], lengths[j], biases[j], dilations[j], paddings[j])
-            transformed_X[i, a2:b2] = np.array([ppv, max_val, std_dev], dtype=np.float64)
+    Parameters
+    ----------
+    X            : ndarray, shape (n_samples, n_timesteps)
+    kernels      : tuple from `generate_kernels`
+    y            : labels (needed in training mode)
+    num_features : keep K best (default 500)
+    score_func   : e.g. chi2, mutual_info_classif, f_classif, ...
+    selector     : fitted SelectKBest (pass when is_train=False)
+    scaler       : fitted MinMaxScaler (pass when is_train=False)
+    is_train     : True = fit  |  False = transform only
 
-            a1 = b1
-            a2 = b2
+    Returns
+    -------
+    X_sel                      (always)
+    selector, k, scaler        (additionally when is_train=True)
+    """
+    # 1) kernel transform
+    Z = apply_kernels(X, kernels)
 
-    return transformed_X
+    # 2) scale 0-1
+    if scaler is None:
+        scaler = MinMaxScaler()
+        Z = scaler.fit_transform(Z)
+    else:
+        Z = scaler.transform(Z)
+
+    # 3) feature selection
+    if is_train:
+        selector = SelectKBest(score_func, k=num_features)
+        Z_sel    = selector.fit_transform(Z, y)
+        return Z_sel, selector, num_features, scaler
+    else:
+        if selector is None:
+            raise ValueError("selector must be provided when is_train=False")
+        Z_sel = selector.transform(Z)
+        return Z_sel

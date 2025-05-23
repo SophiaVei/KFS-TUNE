@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('TkAgg')  # Or 'Qt5Agg', 'Agg', 'MacOSX' depending on your OS
 import matplotlib.pyplot as plt
 import numpy as np
 

@@ -14,7 +14,7 @@ import random
 from scipy.sparse import issparse
 
 # Load the provided dataset
-file_path = 'daily_fitbit_surveys_semas.pkl'
+file_path = '../daily_fitbit_surveys_semas.pkl'
 data = pd.read_pickle(file_path)
 
 # Drop columns that are unsuitable for model training (e.g., ID, dates)

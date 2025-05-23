@@ -107,7 +107,7 @@ generate_and_save_datasets(40, (100, 1000), (30, 1000), 3)
 
 # Generate large datasets with the new function
 # Example call with updated parameters
-generate_large_dataset_v2(100000, (30, 70), 3, 'large_dataset_series_v2.csv')
+generate_large_dataset_v2(100000, (30, 70), 3, '../large_dataset_series_v2.csv')
 
 
 def generate_single_large_series(num_samples, num_classes, filename):
@@ -135,5 +135,5 @@ def generate_single_large_series(num_samples, num_classes, filename):
 
 
 # Example usage to generate a single series with 1,000,000 samples
-generate_single_large_series(1000000, 3, 'single_large_series.csv')
+generate_single_large_series(1000000, 3, '../single_large_series.csv')
 

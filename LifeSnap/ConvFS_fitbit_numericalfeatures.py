@@ -1,7 +1,9 @@
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import RidgeClassifierCV
-from ConvFS_functions import generate_kernels, transform_and_select_features
+from ConvFS_functions import (
+    generate_kernels, transform_and_select_features, scorers
+)
 import time
 from sklearn.model_selection import train_test_split
 from sklearn.impute import SimpleImputer
@@ -12,7 +14,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load the provided dataset
-file_path = 'daily_fitbit_surveys_semas.pkl'
+file_path = '../daily_fitbit_surveys_semas.pkl'
 data = pd.read_pickle(file_path)
 
 # Explore the dataset to understand its structure
@@ -135,7 +137,9 @@ total_start_time = time.time()
 
 # Start time measurement for train transformation
 start_time = time.time()
-kernels = generate_kernels(X_train.shape[2], 10000, int(avg_series_length))
+kernels = generate_kernels(input_length=X_train.shape[1],
+                           num_kernels=10000,
+                           avg_series_length=int(X_train.shape[1]))
 X_train_reshaped = X_train.reshape(-1, X_train.shape[2])
 X_train_transformed, selector, best_num_features, scaler = transform_and_select_features(
     X_train_reshaped, kernels, y_train.repeat(window_size), is_train=True)
@@ -144,6 +148,14 @@ train_transform_time = time.time() - start_time
 # Ensure y_train and X_train_transformed have consistent lengths
 y_train_corrected = y_train.repeat(X_train_transformed.shape[0] // y_train.shape[0])
 
+# training transform + FS
+Xtr, sel, k, scl = transform_and_select_features(
+    X_train, kernels,
+    y=y_train,
+    num_features=500,
+    score_func=scorers["mi"],     # <-- chi2 | mi | anova
+    is_train=True
+)
 # Train classifier
 start_time = time.time()
 classifier = RidgeClassifierCV(alphas=np.logspace(-3, 3, 10))
@@ -159,7 +171,12 @@ test_transform_time = time.time() - start_time
 
 # Ensure y_test and X_test_transformed have consistent lengths
 y_test_corrected = y_test.repeat(X_test_transformed.shape[0] // y_test.shape[0])
-
+# test transform
+Xte = transform_and_select_features(
+    X_test, kernels,
+    selector=sel, scaler=scl,
+    is_train=False
+)
 # Test classifier
 start_time = time.time()
 predictions = classifier.predict(X_test_transformed)

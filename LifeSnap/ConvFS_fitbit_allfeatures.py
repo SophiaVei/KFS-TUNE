@@ -12,7 +12,7 @@ from imblearn.over_sampling import SMOTE, RandomOverSampler
 from collections import Counter
 
 # Load the provided dataset
-file_path = 'daily_fitbit_surveys_semas.pkl'
+file_path = '../daily_fitbit_surveys_semas.pkl'
 data = pd.read_pickle(file_path)
 
 # Explore the dataset to understand its structure
