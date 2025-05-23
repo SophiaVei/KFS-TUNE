@@ -1,5 +1,5 @@
 """
-ConvFS_functions.py  ––  core utilities for KFS-TUNE / ConvFS
+KFSTUNE_functions.py  ––  core utilities for KFS-TUNE / ConvFS
 -------------------------------------------------------------
 
 • generate_kernels(...)             → random 1-D convolutional kernel bank
