@@ -153,7 +153,7 @@ def main():
                   f"Avg Segment Length: {avg_segment_length:.2f}")
 
     # Process the largest dataset
-    largest_dataset_filename = "large_dataset_series_v2.csv"
+    largest_dataset_filename = "../large_dataset_series_v2.csv"
     largest_dataset = load_dataset(largest_dataset_filename)
 
     # Print characteristics for the largest dataset
