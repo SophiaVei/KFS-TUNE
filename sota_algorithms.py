@@ -320,7 +320,6 @@ plot_results_improved(results, "Memory Usage", dataset_name, "peachpuff", ylabel
 plot_results_improved(results, "Precision", dataset_name, "peru")
 plot_results_improved(results, "F1 Score", dataset_name, "sienna")
 
-
 # Plot confusion matrices together
 num_classifiers = len(results["Classifier"])
 num_cols = 7
