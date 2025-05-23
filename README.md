@@ -13,15 +13,7 @@ The present repository is dedicated to Time Series Classification. It contains t
 ![image](https://github.com/user-attachments/assets/dcd74a1f-e6ee-4be0-ad39-fed48ecde109)
 
 
-
-### 1. Systematic evaluation on various datasets:
-#### UCR Archive
-   The datasets are organized based on dimensions (univariate or multivarite)
-      * Length (<300, >=300, >700)
-         * Classes (<10, >=10, >=30)
-     
-   We conducted our experiments on various datasets for this part, but we include here 11, since based on the former categorization UCR contains this number of datasets.
-   We use numerous datasets to evaluate 21 classifiers which we separate in 6 categories:
+We use numerous datasets to evaluate 21 classifiers which we separate in 6 categories:
    1. Deep Learning:
       * Multi Layer Perceptron (MLP)
       * Convolutional Neural Network (CNN)
@@ -55,6 +47,16 @@ The present repository is dedicated to Time Series Classification. It contains t
   We also create plots such as macro average ROC AUC curve per classifier, confusion matrices and ROC AUC curves for each class.
   We also introduce results with and without cross-validation. For cross-validation we use both k-fold and TimeSeriesSplit. We use k-fold only for comparison reasons with other papers,
   since we are opposite to its use for time series data, for temporal structure reasons. Therefore, we always suggest TimeSeriesSplit if you want to use cross-validation.
+
+![image](https://github.com/user-attachments/assets/b610bc5b-a30c-4e1d-b51e-06350ff725ef)
+
+  We additionally provide scripts using all the previously mentioned algorithms at once in all datasets so that the user can have a clear comparison of the algorithms.
+
+  
+### 1. Systematic evaluation on various datasets:
+#### UCR Archive
+The datasets are organized based on dimensions (univariate or multivarite). All dataset forms (sensors, ECGs, sound, image, etc) are already transformed in time series format in this case. This is a very important part of our evaluation, since UCR is the SOTA repository to test time series classification algorithms.
+    
 
 #### LifeSnaps dataset
 LifeSnaps dataset, a multi-modal, longitudinal, and geographically-distributed dataset containing a plethora of anthropological data, collected unobtrusively for the total course of more than 4 months by n = 71 participants. LifeSnaps contains more than 35 different data types from second to daily granularity, totaling more than 71 M rows of data.
