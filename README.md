@@ -10,7 +10,7 @@ The present repository is dedicated to Time Series Classification. It contains t
   classifiers, especially deep-leaning models, possess increased time complexities.
 
   We introduce KFS-TUNE's flow below:
-![Blank board](https://github.com/SophiaVei/TimeSeriesClassification/assets/92432705/34ea154c-4b89-4aa1-a02e-bcd3a5d0ce11)
+![image](https://github.com/user-attachments/assets/dcd74a1f-e6ee-4be0-ad39-fed48ecde109)
 
 
 
