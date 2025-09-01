@@ -1,4 +1,4 @@
-# KFS-TUNE: Kernel-based Feature Selection for efficiency and
+# KFS-TUNE:
 ## Kernel-based Feature Selection for efficiency and accuracy tuning in Time Series Classification
 
 
