@@ -1,0 +1,15 @@
+{
+  "dataset": "ArrowHead",
+  "selector": "random",
+  "accuracy": 0.7885714285714286,
+  "train_transform_time_s": 2.9078410998918116,
+  "feature_selection_time_s": 0.0005713000427931547,
+  "training_time_s": 0.008068300085142255,
+  "test_transform_time_s": 15.202603500103578,
+  "inference_time_s": 0.0006566999945789576,
+  "total_time_s": 24.072498199995607,
+  "retained_features": 500,
+  "memory_delta_mb": 84.88671875,
+  "status": "ok",
+  "error": ""
+}

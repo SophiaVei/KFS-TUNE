@@ -1,0 +1,15 @@
+{
+  "dataset": "Computers",
+  "selector": "chi2",
+  "accuracy": 0.744,
+  "train_transform_time_s": 14.07758260006085,
+  "feature_selection_time_s": 0.05751590011641383,
+  "training_time_s": 0.023842399939894676,
+  "test_transform_time_s": 36.339263199828565,
+  "inference_time_s": 0.0008089998736977577,
+  "total_time_s": 53.17869650013745,
+  "retained_features": 500,
+  "memory_delta_mb": 155.46875,
+  "status": "ok",
+  "error": ""
+}

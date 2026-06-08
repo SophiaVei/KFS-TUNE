@@ -1,0 +1,15 @@
+{
+  "dataset": "Adiac",
+  "selector": "random",
+  "accuracy": 0.6879795396419437,
+  "train_transform_time_s": 22.611151299905032,
+  "feature_selection_time_s": 0.0022740999702364206,
+  "training_time_s": 0.09241969999857247,
+  "test_transform_time_s": 17.301929699955508,
+  "inference_time_s": 0.0013109000865370035,
+  "total_time_s": 45.22140450007282,
+  "retained_features": 500,
+  "memory_delta_mb": 216.54296875,
+  "status": "ok",
+  "error": ""
+}

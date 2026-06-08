@@ -1,0 +1,15 @@
+{
+  "dataset": "CBF",
+  "selector": "chi2",
+  "accuracy": 0.9922222222222222,
+  "train_transform_time_s": 1.0155774999875575,
+  "feature_selection_time_s": 0.014073600061237812,
+  "training_time_s": 0.003987899981439114,
+  "test_transform_time_s": 31.01438460010104,
+  "inference_time_s": 0.0015984000638127327,
+  "total_time_s": 37.072812899947166,
+  "retained_features": 500,
+  "memory_delta_mb": 250.74609375,
+  "status": "ok",
+  "error": ""
+}

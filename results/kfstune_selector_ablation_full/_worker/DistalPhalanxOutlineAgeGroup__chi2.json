@@ -1,0 +1,15 @@
+{
+  "dataset": "DistalPhalanxOutlineAgeGroup",
+  "selector": "chi2",
+  "accuracy": 0.7697841726618705,
+  "train_transform_time_s": 3.06780149997212,
+  "feature_selection_time_s": 0.05109179997816682,
+  "training_time_s": 0.08904900006018579,
+  "test_transform_time_s": 1.3433784998487681,
+  "inference_time_s": 0.0004749000072479248,
+  "total_time_s": 7.2235192998778075,
+  "retained_features": 500,
+  "memory_delta_mb": 166.19921875,
+  "status": "ok",
+  "error": ""
+}

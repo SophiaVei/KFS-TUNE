@@ -1,0 +1,15 @@
+{
+  "dataset": "Computers",
+  "selector": "anova_f",
+  "accuracy": 0.732,
+  "train_transform_time_s": 14.524915599962696,
+  "feature_selection_time_s": 0.08863879996351898,
+  "training_time_s": 0.020797800039872527,
+  "test_transform_time_s": 14.398699400015175,
+  "inference_time_s": 0.00043700006790459156,
+  "total_time_s": 31.682016500039026,
+  "retained_features": 500,
+  "memory_delta_mb": 149.81640625,
+  "status": "ok",
+  "error": ""
+}

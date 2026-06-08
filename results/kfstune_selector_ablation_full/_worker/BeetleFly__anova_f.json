@@ -1,0 +1,15 @@
+{
+  "dataset": "BeetleFly",
+  "selector": "anova_f",
+  "accuracy": 0.85,
+  "train_transform_time_s": 3.723840600112453,
+  "feature_selection_time_s": 0.038005700102075934,
+  "training_time_s": 0.004296599887311459,
+  "test_transform_time_s": 2.284692300017923,
+  "inference_time_s": 0.0004803999327123165,
+  "total_time_s": 11.521473799832165,
+  "retained_features": 500,
+  "memory_delta_mb": 49.3125,
+  "status": "ok",
+  "error": ""
+}

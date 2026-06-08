@@ -1,0 +1,15 @@
+{
+  "dataset": "CinCECGTorso",
+  "selector": "random",
+  "accuracy": 0.8927536231884058,
+  "train_transform_time_s": 5.865051100030541,
+  "feature_selection_time_s": 0.00039840000681579113,
+  "training_time_s": 0.0033708999399095774,
+  "test_transform_time_s": 413.0391448000446,
+  "inference_time_s": 0.0032184000592678785,
+  "total_time_s": 422.03537270007655,
+  "retained_features": 500,
+  "memory_delta_mb": 361.43359375,
+  "status": "ok",
+  "error": ""
+}

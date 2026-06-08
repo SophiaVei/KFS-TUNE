@@ -1,0 +1,15 @@
+{
+  "dataset": "CBF",
+  "selector": "random",
+  "accuracy": 0.9955555555555555,
+  "train_transform_time_s": 0.3086149001028389,
+  "feature_selection_time_s": 0.0003154999576508999,
+  "training_time_s": 0.0033529000356793404,
+  "test_transform_time_s": 9.315126199973747,
+  "inference_time_s": 0.001256000017747283,
+  "total_time_s": 12.182206499855965,
+  "retained_features": 500,
+  "memory_delta_mb": 248.890625,
+  "status": "ok",
+  "error": ""
+}

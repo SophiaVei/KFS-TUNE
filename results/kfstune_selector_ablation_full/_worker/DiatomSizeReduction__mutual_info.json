@@ -1,0 +1,15 @@
+{
+  "dataset": "DiatomSizeReduction",
+  "selector": "mutual_info",
+  "accuracy": 0.9575163398692811,
+  "train_transform_time_s": 0.46012329985387623,
+  "feature_selection_time_s": 821.0778016000986,
+  "training_time_s": 0.006275799823924899,
+  "test_transform_time_s": 8.66974200005643,
+  "inference_time_s": 0.0007693001534789801,
+  "total_time_s": 833.0052854001988,
+  "retained_features": 500,
+  "memory_delta_mb": 107.76171875,
+  "status": "ok",
+  "error": ""
+}

@@ -1,0 +1,15 @@
+{
+  "dataset": "CBF",
+  "selector": "anova_f",
+  "accuracy": 1.0,
+  "train_transform_time_s": 0.850231199990958,
+  "feature_selection_time_s": 0.021164099918678403,
+  "training_time_s": 0.0034457999281585217,
+  "test_transform_time_s": 20.50691180001013,
+  "inference_time_s": 0.001578599913045764,
+  "total_time_s": 25.17049470008351,
+  "retained_features": 500,
+  "memory_delta_mb": 251.98046875,
+  "status": "ok",
+  "error": ""
+}

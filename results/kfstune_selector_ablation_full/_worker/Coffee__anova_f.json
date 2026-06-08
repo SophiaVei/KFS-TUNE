@@ -1,0 +1,15 @@
+{
+  "dataset": "Coffee",
+  "selector": "anova_f",
+  "accuracy": 1.0,
+  "train_transform_time_s": 0.6357925999909639,
+  "feature_selection_time_s": 0.021511400118470192,
+  "training_time_s": 0.003985899966210127,
+  "test_transform_time_s": 0.6419637999497354,
+  "inference_time_s": 0.000282699940726161,
+  "total_time_s": 3.990979199996218,
+  "retained_features": 500,
+  "memory_delta_mb": 51.453125,
+  "status": "ok",
+  "error": ""
+}

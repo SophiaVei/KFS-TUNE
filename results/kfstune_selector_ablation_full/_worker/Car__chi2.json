@@ -1,0 +1,15 @@
+{
+  "dataset": "Car",
+  "selector": "chi2",
+  "accuracy": 0.8333333333333334,
+  "train_transform_time_s": 2.691021300153807,
+  "feature_selection_time_s": 0.01877589989453554,
+  "training_time_s": 0.003477599937468767,
+  "test_transform_time_s": 2.7111998999025673,
+  "inference_time_s": 0.0003309999592602253,
+  "total_time_s": 8.08402660000138,
+  "retained_features": 500,
+  "memory_delta_mb": 65.734375,
+  "status": "ok",
+  "error": ""
+}

@@ -1,0 +1,15 @@
+{
+  "dataset": "CBF",
+  "selector": "mutual_info",
+  "accuracy": 0.9955555555555555,
+  "train_transform_time_s": 0.29487899993546307,
+  "feature_selection_time_s": 41.12780760019086,
+  "training_time_s": 0.002562900073826313,
+  "test_transform_time_s": 9.445637499913573,
+  "inference_time_s": 0.0014804000966250896,
+  "total_time_s": 55.71166520006955,
+  "retained_features": 500,
+  "memory_delta_mb": 251.859375,
+  "status": "ok",
+  "error": ""
+}

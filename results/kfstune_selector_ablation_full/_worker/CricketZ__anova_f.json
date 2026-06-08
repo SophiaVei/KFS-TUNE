@@ -1,0 +1,15 @@
+{
+  "dataset": "CricketZ",
+  "selector": "anova_f",
+  "accuracy": 0.4230769230769231,
+  "train_transform_time_s": 10.104913600021973,
+  "feature_selection_time_s": 0.12854199996218085,
+  "training_time_s": 0.06455059978179634,
+  "test_transform_time_s": 10.317891700193286,
+  "inference_time_s": 0.0008028000593185425,
+  "total_time_s": 23.392882300075144,
+  "retained_features": 500,
+  "memory_delta_mb": 220.6484375,
+  "status": "ok",
+  "error": ""
+}

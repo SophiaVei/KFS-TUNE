@@ -1,0 +1,15 @@
+{
+  "dataset": "ArrowHead",
+  "selector": "chi2",
+  "accuracy": 0.7542857142857143,
+  "train_transform_time_s": 2.7243413999676704,
+  "feature_selection_time_s": 0.021241199923679233,
+  "training_time_s": 0.004171799868345261,
+  "test_transform_time_s": 13.477099400013685,
+  "inference_time_s": 0.0005355998873710632,
+  "total_time_s": 21.434658200014383,
+  "retained_features": 500,
+  "memory_delta_mb": 85.88671875,
+  "status": "ok",
+  "error": ""
+}

@@ -1,0 +1,15 @@
+{
+  "dataset": "BirdChicken",
+  "selector": "random",
+  "accuracy": 0.8,
+  "train_transform_time_s": 0.7920584001112729,
+  "feature_selection_time_s": 0.00026190001517534256,
+  "training_time_s": 0.0026231000665575266,
+  "test_transform_time_s": 0.8065566001459956,
+  "inference_time_s": 0.000359599944204092,
+  "total_time_s": 4.305267800111324,
+  "retained_features": 500,
+  "memory_delta_mb": 46.74609375,
+  "status": "ok",
+  "error": ""
+}

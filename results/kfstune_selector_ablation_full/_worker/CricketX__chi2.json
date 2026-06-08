@@ -1,0 +1,15 @@
+{
+  "dataset": "CricketX",
+  "selector": "chi2",
+  "accuracy": 0.4897435897435897,
+  "train_transform_time_s": 9.731534299906343,
+  "feature_selection_time_s": 0.04320349986664951,
+  "training_time_s": 0.05776769993826747,
+  "test_transform_time_s": 9.364946499932557,
+  "inference_time_s": 0.0008642000611871481,
+  "total_time_s": 22.119593900162727,
+  "retained_features": 500,
+  "memory_delta_mb": 215.9140625,
+  "status": "ok",
+  "error": ""
+}

@@ -1,0 +1,15 @@
+{
+  "dataset": "Adiac",
+  "selector": "mutual_info",
+  "accuracy": 0.6547314578005116,
+  "train_transform_time_s": 22.218182999873534,
+  "feature_selection_time_s": 2012.1058386999648,
+  "training_time_s": 0.09369669994339347,
+  "test_transform_time_s": 13.878609399776906,
+  "inference_time_s": 0.0013776000123471022,
+  "total_time_s": 2053.6811053000856,
+  "retained_features": 500,
+  "memory_delta_mb": 165.38671875,
+  "status": "ok",
+  "error": ""
+}

@@ -1,0 +1,15 @@
+{
+  "dataset": "Car",
+  "selector": "mutual_info",
+  "accuracy": 0.9,
+  "train_transform_time_s": 7.602396300062537,
+  "feature_selection_time_s": 114.61627610004507,
+  "training_time_s": 0.004974900046363473,
+  "test_transform_time_s": 8.184401399921626,
+  "inference_time_s": 0.00039369985461235046,
+  "total_time_s": 136.07179259997793,
+  "retained_features": 500,
+  "memory_delta_mb": 65.6953125,
+  "status": "ok",
+  "error": ""
+}

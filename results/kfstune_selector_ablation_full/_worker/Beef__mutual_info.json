@@ -1,0 +1,15 @@
+{
+  "dataset": "Beef",
+  "selector": "mutual_info",
+  "accuracy": 0.7333333333333333,
+  "train_transform_time_s": 3.0474902000278234,
+  "feature_selection_time_s": 1464.8918995999265,
+  "training_time_s": 0.00705250003375113,
+  "test_transform_time_s": 3.531325399875641,
+  "inference_time_s": 0.0004300998989492655,
+  "total_time_s": 1476.698917800095,
+  "retained_features": 500,
+  "memory_delta_mb": 52.2890625,
+  "status": "ok",
+  "error": ""
+}

@@ -1,0 +1,15 @@
+{
+  "dataset": "Adiac",
+  "selector": "anova_f",
+  "accuracy": 0.659846547314578,
+  "train_transform_time_s": 6.455815899884328,
+  "feature_selection_time_s": 0.18226950010284781,
+  "training_time_s": 0.09879040019586682,
+  "test_transform_time_s": 18.885421999963,
+  "inference_time_s": 0.003996500046923757,
+  "total_time_s": 28.68086909991689,
+  "retained_features": 500,
+  "memory_delta_mb": 220.6015625,
+  "status": "ok",
+  "error": ""
+}

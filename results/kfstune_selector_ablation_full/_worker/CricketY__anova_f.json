@@ -1,0 +1,15 @@
+{
+  "dataset": "CricketY",
+  "selector": "anova_f",
+  "accuracy": 0.6974358974358974,
+  "train_transform_time_s": 9.238842900143936,
+  "feature_selection_time_s": 0.12322000018320978,
+  "training_time_s": 0.05801919987425208,
+  "test_transform_time_s": 9.245982599910349,
+  "inference_time_s": 0.0007807000074535608,
+  "total_time_s": 21.37739669997245,
+  "retained_features": 500,
+  "memory_delta_mb": 221.796875,
+  "status": "ok",
+  "error": ""
+}

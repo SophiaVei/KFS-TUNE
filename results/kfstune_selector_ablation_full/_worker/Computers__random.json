@@ -1,0 +1,15 @@
+{
+  "dataset": "Computers",
+  "selector": "random",
+  "accuracy": 0.744,
+  "train_transform_time_s": 15.007727799937129,
+  "feature_selection_time_s": 0.0019002999179065228,
+  "training_time_s": 0.02257189992815256,
+  "test_transform_time_s": 14.68156240019016,
+  "inference_time_s": 0.0007620002143085003,
+  "total_time_s": 32.43099780008197,
+  "retained_features": 500,
+  "memory_delta_mb": 150.09765625,
+  "status": "ok",
+  "error": ""
+}

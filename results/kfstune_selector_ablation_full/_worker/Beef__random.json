@@ -1,0 +1,15 @@
+{
+  "dataset": "Beef",
+  "selector": "random",
+  "accuracy": 0.8,
+  "train_transform_time_s": 2.9582245000638068,
+  "feature_selection_time_s": 0.0005736998282372952,
+  "training_time_s": 0.005656099878251553,
+  "test_transform_time_s": 2.7274925999809057,
+  "inference_time_s": 0.0004116999916732311,
+  "total_time_s": 9.740607700077817,
+  "retained_features": 500,
+  "memory_delta_mb": 51.25390625,
+  "status": "ok",
+  "error": ""
+}
