@@ -1,0 +1,15 @@
+{
+  "dataset": "DiatomSizeReduction",
+  "selector": "chi2",
+  "accuracy": 0.9738562091503268,
+  "train_transform_time_s": 0.4572665998712182,
+  "feature_selection_time_s": 0.01596119999885559,
+  "training_time_s": 0.0026181999128311872,
+  "test_transform_time_s": 9.022991700097919,
+  "inference_time_s": 0.0007100000511854887,
+  "total_time_s": 12.243276299908757,
+  "retained_features": 500,
+  "memory_delta_mb": 109.32421875,
+  "status": "ok",
+  "error": ""
+}

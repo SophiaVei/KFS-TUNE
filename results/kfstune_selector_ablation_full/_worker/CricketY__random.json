@@ -1,0 +1,15 @@
+{
+  "dataset": "CricketY",
+  "selector": "random",
+  "accuracy": 0.7794871794871795,
+  "train_transform_time_s": 9.525025900220498,
+  "feature_selection_time_s": 0.0034174001775681973,
+  "training_time_s": 0.07277429988607764,
+  "test_transform_time_s": 9.6008681000676,
+  "inference_time_s": 0.001327600097283721,
+  "total_time_s": 21.987455599941313,
+  "retained_features": 500,
+  "memory_delta_mb": 214.921875,
+  "status": "ok",
+  "error": ""
+}

@@ -1,0 +1,15 @@
+{
+  "dataset": "Coffee",
+  "selector": "chi2",
+  "accuracy": 1.0,
+  "train_transform_time_s": 0.6304558999836445,
+  "feature_selection_time_s": 0.04002099996432662,
+  "training_time_s": 0.003260500030592084,
+  "test_transform_time_s": 0.6382424999028444,
+  "inference_time_s": 0.00034300005063414574,
+  "total_time_s": 4.012957599945366,
+  "retained_features": 500,
+  "memory_delta_mb": 52.02734375,
+  "status": "ok",
+  "error": ""
+}

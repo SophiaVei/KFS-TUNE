@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Ablation of the statistical feature-selection criterion in KFS-TUNE. All variants use the same random convolutional transform, feature budget, and RidgeClassifierCV; only the feature-scoring criterion changes. Accuracy and runtime are reported as aggregate performance summaries, and lower average rank is better.}
+\label{tab:selector_ablation}
+\begin{tabular}{lrrrr}
+\toprule
+Selector & Mean accuracy & Avg. rank & Median runtime (s) & Median selection (s) \\
+\midrule
+$\chi^2$ & 0.81 & 1.76 & 1.25 & 0.57 \\
+ANOVA-F & 0.77 & 3.09 & 18.06 & 0.07 \\
+Mutual information & 0.79 & 2.47 & 136.07 & 114.62 \\
+Random & 0.82 & 2.68 & 21.99 & 0.00 \\
+\bottomrule
+\end{tabular}
+\end{table}

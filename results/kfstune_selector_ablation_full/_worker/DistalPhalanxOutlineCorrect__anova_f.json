@@ -1,0 +1,15 @@
+{
+  "dataset": "DistalPhalanxOutlineCorrect",
+  "selector": "anova_f",
+  "accuracy": 0.782608695652174,
+  "train_transform_time_s": 3.6664823999162763,
+  "feature_selection_time_s": 0.24136860016733408,
+  "training_time_s": 0.12926509999670088,
+  "test_transform_time_s": 1.741470699897036,
+  "inference_time_s": 0.00043969997204840183,
+  "total_time_s": 8.146332999924198,
+  "retained_features": 500,
+  "memory_delta_mb": 242.83984375,
+  "status": "ok",
+  "error": ""
+}

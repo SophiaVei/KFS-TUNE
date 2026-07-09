@@ -1,0 +1,15 @@
+{
+  "dataset": "Coffee",
+  "selector": "mutual_info",
+  "accuracy": 1.0,
+  "train_transform_time_s": 0.6392645000014454,
+  "feature_selection_time_s": 32.86897729989141,
+  "training_time_s": 0.0025804999750107527,
+  "test_transform_time_s": 0.6390203000046313,
+  "inference_time_s": 0.00033579999580979347,
+  "total_time_s": 36.89476029993966,
+  "retained_features": 500,
+  "memory_delta_mb": 51.33984375,
+  "status": "ok",
+  "error": ""
+}

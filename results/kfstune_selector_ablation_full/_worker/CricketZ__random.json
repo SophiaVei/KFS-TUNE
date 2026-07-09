@@ -1,0 +1,15 @@
+{
+  "dataset": "CricketZ",
+  "selector": "random",
+  "accuracy": 0.8,
+  "train_transform_time_s": 10.498019099934027,
+  "feature_selection_time_s": 0.0032392998691648245,
+  "training_time_s": 0.07135109999217093,
+  "test_transform_time_s": 10.281725199893117,
+  "inference_time_s": 0.0008159999269992113,
+  "total_time_s": 23.77547309990041,
+  "retained_features": 500,
+  "memory_delta_mb": 215.2890625,
+  "status": "ok",
+  "error": ""
+}

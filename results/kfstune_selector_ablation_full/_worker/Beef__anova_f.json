@@ -1,0 +1,15 @@
+{
+  "dataset": "Beef",
+  "selector": "anova_f",
+  "accuracy": 0.7333333333333333,
+  "train_transform_time_s": 5.223085900070146,
+  "feature_selection_time_s": 0.04248359985649586,
+  "training_time_s": 0.007896399823948741,
+  "test_transform_time_s": 5.3390134000219405,
+  "inference_time_s": 0.0005548999179154634,
+  "total_time_s": 16.95229179994203,
+  "retained_features": 500,
+  "memory_delta_mb": 54.44140625,
+  "status": "ok",
+  "error": ""
+}

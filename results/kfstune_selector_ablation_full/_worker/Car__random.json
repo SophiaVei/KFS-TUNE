@@ -1,0 +1,15 @@
+{
+  "dataset": "Car",
+  "selector": "random",
+  "accuracy": 0.8833333333333333,
+  "train_transform_time_s": 11.370130100054666,
+  "feature_selection_time_s": 0.0006227998528629541,
+  "training_time_s": 0.006550299935042858,
+  "test_transform_time_s": 10.579085299978033,
+  "inference_time_s": 0.0004164001438766718,
+  "total_time_s": 28.113088799873367,
+  "retained_features": 500,
+  "memory_delta_mb": 63.40625,
+  "status": "ok",
+  "error": ""
+}

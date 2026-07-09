@@ -1,0 +1,15 @@
+{
+  "dataset": "Adiac",
+  "selector": "chi2",
+  "accuracy": 0.6956521739130435,
+  "train_transform_time_s": 5.467313900124282,
+  "feature_selection_time_s": 0.053159600123763084,
+  "training_time_s": 0.06297970004379749,
+  "test_transform_time_s": 5.938420500140637,
+  "inference_time_s": 0.0011412999592721462,
+  "total_time_s": 14.157866700086743,
+  "retained_features": 500,
+  "memory_delta_mb": 217.51171875,
+  "status": "ok",
+  "error": ""
+}

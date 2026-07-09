@@ -1,0 +1,15 @@
+{
+  "dataset": "Computers",
+  "selector": "mutual_info",
+  "accuracy": 0.776,
+  "train_transform_time_s": 15.098582899896428,
+  "feature_selection_time_s": 44.262379799969494,
+  "training_time_s": 0.024508000118657947,
+  "test_transform_time_s": 14.512256000190973,
+  "inference_time_s": 0.00048690009862184525,
+  "total_time_s": 76.5668474000413,
+  "retained_features": 500,
+  "memory_delta_mb": 149.58203125,
+  "status": "ok",
+  "error": ""
+}

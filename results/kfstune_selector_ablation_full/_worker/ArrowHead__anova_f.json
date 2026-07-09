@@ -1,0 +1,15 @@
+{
+  "dataset": "ArrowHead",
+  "selector": "anova_f",
+  "accuracy": 0.7885714285714286,
+  "train_transform_time_s": 2.59183879988268,
+  "feature_selection_time_s": 0.04056799993850291,
+  "training_time_s": 0.00989730004221201,
+  "test_transform_time_s": 11.006812599953264,
+  "inference_time_s": 0.000529400072991848,
+  "total_time_s": 18.060774100013077,
+  "retained_features": 500,
+  "memory_delta_mb": 87.484375,
+  "status": "ok",
+  "error": ""
+}

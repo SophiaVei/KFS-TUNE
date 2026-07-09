@@ -1,0 +1,15 @@
+{
+  "dataset": "DistalPhalanxOutlineAgeGroup",
+  "selector": "anova_f",
+  "accuracy": 0.762589928057554,
+  "train_transform_time_s": 4.374501500045881,
+  "feature_selection_time_s": 0.16657939995639026,
+  "training_time_s": 0.07627510000020266,
+  "test_transform_time_s": 1.317763099912554,
+  "inference_time_s": 0.0005222000181674957,
+  "total_time_s": 9.066684099845588,
+  "retained_features": 500,
+  "memory_delta_mb": 167.34765625,
+  "status": "ok",
+  "error": ""
+}

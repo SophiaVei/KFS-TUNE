@@ -1,0 +1,15 @@
+{
+  "dataset": "ChlorineConcentration",
+  "selector": "chi2",
+  "accuracy": 0.6072916666666667,
+  "train_transform_time_s": 6.240863899933174,
+  "feature_selection_time_s": 0.046597099862992764,
+  "training_time_s": 0.07331930007785559,
+  "test_transform_time_s": 85.28972769994289,
+  "inference_time_s": 0.004821400158107281,
+  "total_time_s": 94.2489983998239,
+  "retained_features": 500,
+  "memory_delta_mb": 1042.22265625,
+  "status": "ok",
+  "error": ""
+}

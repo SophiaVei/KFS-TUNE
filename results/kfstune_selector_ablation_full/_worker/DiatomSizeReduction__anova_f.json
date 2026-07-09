@@ -1,0 +1,15 @@
+{
+  "dataset": "DiatomSizeReduction",
+  "selector": "anova_f",
+  "accuracy": 0.9575163398692811,
+  "train_transform_time_s": 0.46271480014547706,
+  "feature_selection_time_s": 0.014617000008001924,
+  "training_time_s": 0.002670799847692251,
+  "test_transform_time_s": 9.069700400112197,
+  "inference_time_s": 0.0007327999919652939,
+  "total_time_s": 12.324484900105745,
+  "retained_features": 500,
+  "memory_delta_mb": 114.05859375,
+  "status": "ok",
+  "error": ""
+}

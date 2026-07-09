@@ -1,0 +1,15 @@
+{
+  "dataset": "BeetleFly",
+  "selector": "random",
+  "accuracy": 0.85,
+  "train_transform_time_s": 0.6702132001519203,
+  "feature_selection_time_s": 0.0002351999282836914,
+  "training_time_s": 0.0024216999299824238,
+  "test_transform_time_s": 0.6863514999859035,
+  "inference_time_s": 0.00025359983555972576,
+  "total_time_s": 3.791046799859032,
+  "retained_features": 500,
+  "memory_delta_mb": 46.671875,
+  "status": "ok",
+  "error": ""
+}

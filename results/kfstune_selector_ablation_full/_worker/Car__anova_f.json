@@ -1,0 +1,15 @@
+{
+  "dataset": "Car",
+  "selector": "anova_f",
+  "accuracy": 0.8833333333333333,
+  "train_transform_time_s": 2.363025699974969,
+  "feature_selection_time_s": 0.07251189998351038,
+  "training_time_s": 0.0030664000660181046,
+  "test_transform_time_s": 2.3519490000326186,
+  "inference_time_s": 0.0008380000945180655,
+  "total_time_s": 7.189463700167835,
+  "retained_features": 500,
+  "memory_delta_mb": 66.328125,
+  "status": "ok",
+  "error": ""
+}

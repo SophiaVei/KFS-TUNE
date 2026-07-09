@@ -1,0 +1,15 @@
+{
+  "dataset": "ChlorineConcentration",
+  "selector": "anova_f",
+  "accuracy": 0.609375,
+  "train_transform_time_s": 5.378032699925825,
+  "feature_selection_time_s": 0.12634620000608265,
+  "training_time_s": 0.0732595999725163,
+  "test_transform_time_s": 76.88201220007613,
+  "inference_time_s": 0.0037595999892801046,
+  "total_time_s": 84.7098250000272,
+  "retained_features": 500,
+  "memory_delta_mb": 1045.03515625,
+  "status": "ok",
+  "error": ""
+}

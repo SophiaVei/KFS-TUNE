@@ -1,0 +1,15 @@
+{
+  "dataset": "CricketY",
+  "selector": "chi2",
+  "accuracy": 0.6538461538461539,
+  "train_transform_time_s": 9.383424100000411,
+  "feature_selection_time_s": 0.04359619994647801,
+  "training_time_s": 0.05697609996423125,
+  "test_transform_time_s": 9.334924399852753,
+  "inference_time_s": 0.0008870998863130808,
+  "total_time_s": 21.4796394999139,
+  "retained_features": 500,
+  "memory_delta_mb": 216.40625,
+  "status": "ok",
+  "error": ""
+}

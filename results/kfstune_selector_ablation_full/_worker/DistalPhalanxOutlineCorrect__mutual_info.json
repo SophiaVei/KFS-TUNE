@@ -1,0 +1,15 @@
+{
+  "dataset": "DistalPhalanxOutlineCorrect",
+  "selector": "mutual_info",
+  "accuracy": 0.7717391304347826,
+  "train_transform_time_s": 3.8686074998695403,
+  "feature_selection_time_s": 87.31187550001778,
+  "training_time_s": 0.11275980016216636,
+  "test_transform_time_s": 1.8253115999978036,
+  "inference_time_s": 0.00043509993702173233,
+  "total_time_s": 95.59796990011819,
+  "retained_features": 500,
+  "memory_delta_mb": 239.3984375,
+  "status": "ok",
+  "error": ""
+}

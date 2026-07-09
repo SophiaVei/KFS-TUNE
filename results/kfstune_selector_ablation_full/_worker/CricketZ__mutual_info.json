@@ -1,0 +1,15 @@
+{
+  "dataset": "CricketZ",
+  "selector": "mutual_info",
+  "accuracy": 0.43333333333333335,
+  "train_transform_time_s": 9.68540529999882,
+  "feature_selection_time_s": 203.8648875001818,
+  "training_time_s": 0.0694331000559032,
+  "test_transform_time_s": 10.397301099961624,
+  "inference_time_s": 0.0014241000171750784,
+  "total_time_s": 226.81542739993893,
+  "retained_features": 500,
+  "memory_delta_mb": 219.609375,
+  "status": "ok",
+  "error": ""
+}

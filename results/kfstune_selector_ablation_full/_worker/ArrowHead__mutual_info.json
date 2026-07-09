@@ -1,0 +1,15 @@
+{
+  "dataset": "ArrowHead",
+  "selector": "mutual_info",
+  "accuracy": 0.7942857142857143,
+  "train_transform_time_s": 2.2070112000219524,
+  "feature_selection_time_s": 83.05444350000471,
+  "training_time_s": 0.007314200047403574,
+  "test_transform_time_s": 13.150461199926212,
+  "inference_time_s": 0.000516899861395359,
+  "total_time_s": 102.69431299995631,
+  "retained_features": 500,
+  "memory_delta_mb": 84.84765625,
+  "status": "ok",
+  "error": ""
+}
