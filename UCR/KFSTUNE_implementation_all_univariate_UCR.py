@@ -97,6 +97,18 @@ dataset_names = [
 ] # Add more if needed
 
 
+np.random.seed(42)
+_warmup_X = np.random.rand(4, 32)
+_warmup_kernels = generate_kernels(_warmup_X.shape[1], 16, _warmup_X.shape[1])
+transform_and_select_features(
+    _warmup_X,
+    _warmup_kernels,
+    y=np.array([0, 1, 0, 1]),
+    num_features=8,
+    is_train=True,
+)
+
+
 total_start_time = time.time()
 results = []
 for dataset_name in dataset_names:

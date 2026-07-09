@@ -1,249 +1,208 @@
+from pathlib import Path
+import time
+from collections import Counter
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from sklearn.linear_model import RidgeClassifierCV
-from KFSTUNE_functions import (
-    generate_kernels, transform_and_select_features, scorers
-)
-import time
-from sklearn.model_selection import train_test_split
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import LabelEncoder
-from imblearn.over_sampling import SMOTE, RandomOverSampler
-from collections import Counter
-import matplotlib.pyplot as plt
 import seaborn as sns
+from imblearn.over_sampling import SMOTE
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import RidgeClassifierCV
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import GroupShuffleSplit
+from sklearn.preprocessing import LabelEncoder, StandardScaler
 
-# Load the provided dataset
-file_path = '../daily_fitbit_surveys_semas.pkl'
-data = pd.read_pickle(file_path)
+from KFSTUNE_functions import generate_kernels, scorers, transform_and_select_features
 
-# Explore the dataset to understand its structure
-print(data.head())
-print(data.info())
+DATA_PATH = Path(__file__).resolve().parent.parent / "daily_fitbit_surveys_semas.pkl"
+data = pd.read_pickle(DATA_PATH)
 
-# Select relevant numeric columns as features (you can adjust this selection)
 feature_columns = [
-    'nightly_temperature', 'nremhr', 'rmssd', 'spo2', 'full_sleep_breathing_rate',
-    'deep_sleep_breathing_rate', 'light_sleep_breathing_rate', 'rem_sleep_breathing_rate',
-    'stress_score', 'sleep_points', 'responsiveness_points', 'exertion_points',
-    'wrist_temperature', 'altitude', 'calories', 'vo2max', 'distance', 'oxygen_variation',
-    'lightly_active_minutes', 'moderately_active_minutes', 'resting_heart_rate',
-    'sedentary_minutes', 'steps', 'very_active_minutes', 'minutes_below_zone_1',
-    'minutes_in_zone_1', 'minutes_in_zone_2', 'minutes_in_zone_3', 'bpm'
+    "nightly_temperature",
+    "nremhr",
+    "rmssd",
+    "spo2",
+    "full_sleep_breathing_rate",
+    "deep_sleep_breathing_rate",
+    "light_sleep_breathing_rate",
+    "rem_sleep_breathing_rate",
+    "stress_score",
+    "sleep_points",
+    "responsiveness_points",
+    "exertion_points",
+    "wrist_temperature",
+    "altitude",
+    "calories",
+    "vo2max",
+    "distance",
+    "oxygen_variation",
+    "lightly_active_minutes",
+    "moderately_active_minutes",
+    "resting_heart_rate",
+    "sedentary_minutes",
+    "steps",
+    "very_active_minutes",
+    "minutes_below_zone_1",
+    "minutes_in_zone_1",
+    "minutes_in_zone_2",
+    "minutes_in_zone_3",
+    "bpm",
 ]
 
-# Select 'mood' as the label
-label_column = 'mood'
+label_column = "mood"
+required_columns = feature_columns + [label_column, "id", "date"]
+data = data.dropna(subset=[label_column])[required_columns].copy()
 
-# Filter out rows with missing labels
-data = data.dropna(subset=[label_column])
-
-# Extract features and labels
-X = data[feature_columns]
-y = data[label_column]
-
-# Handle missing values in features
-imputer = SimpleImputer(strategy='mean')
-X = imputer.fit_transform(X)
-
-# Encode the labels
 label_encoder = LabelEncoder()
-y = label_encoder.fit_transform(y)
+data["label"] = label_encoder.fit_transform(data[label_column])
+data = data.sort_values(by=["id", "date"])
 
-# Ensure that X is of the correct shape (samples, features)
-print(f'Shape of X: {X.shape}')
-print(f'Shape of y: {y.shape}')
 
-# Create a DataFrame to handle time series segmentation
-time_series_data = pd.DataFrame(X, columns=feature_columns)
-time_series_data['label'] = y
-time_series_data['id'] = data['id']
-time_series_data['date'] = data['date']
-
-# Sort by id and date
-time_series_data = time_series_data.sort_values(by=['id', 'date'])
-
-# Group by 'id' and create time series segments
-grouped = time_series_data.groupby('id')
-
-# Define a function to create overlapping windows of data
-def create_windows(data, window_size=3, step_size=1):
+def create_windows(frame, window_size=3, step_size=1):
     X_windows = []
     y_windows = []
-    for _, group in data:
-        group_len = len(group)
-        if group_len < window_size:
+    groups = []
+
+    for group_id, group in frame.groupby("id"):
+        group = group.reset_index(drop=True)
+        if len(group) < window_size:
             continue
-        for start in range(0, group_len - window_size + 1, step_size):
+
+        values = group[feature_columns].to_numpy(dtype=float)
+        labels = group["label"].to_numpy()
+
+        for start in range(0, len(group) - window_size + 1, step_size):
             end = start + window_size
-            window = group.iloc[start:end]
-            if len(window['label'].unique()) > 1:
+            window_labels = labels[start:end]
+            if len(np.unique(window_labels)) > 1:
                 continue
-            X_windows.append(window[feature_columns].values)
-            y_windows.append(window['label'].values[0])
-    return np.array(X_windows), np.array(y_windows)
+            X_windows.append(values[start:end].reshape(-1))
+            y_windows.append(window_labels[0])
+            groups.append(group_id)
 
-# Create windows
-X_windows, y_windows = create_windows(grouped)
+    return np.asarray(X_windows), np.asarray(y_windows), np.asarray(groups)
 
-# Check the shape of the windows
-print(f'Shape of X_windows: {X_windows.shape}')
-print(f'Shape of y_windows: {y_windows.shape}')
 
-# Check class distribution
-class_distribution = Counter(y_windows)
-print(f"Class distribution in y_windows: {class_distribution}")
+X_windows, y_windows, window_groups = create_windows(data)
+print(f"Shape of X_windows: {X_windows.shape}")
+print(f"Shape of y_windows: {y_windows.shape}")
+print(f"Class distribution in windows: {Counter(y_windows)}")
 
-# Reshape X_windows for resampling
-n_samples, window_size, n_features = X_windows.shape
-X_windows_reshaped = X_windows.reshape(n_samples, -1)
+gss = GroupShuffleSplit(n_splits=1, test_size=0.3, random_state=42)
+train_idx, test_idx = next(gss.split(X_windows, y_windows, groups=window_groups))
 
-# Filter out classes with too few samples
-min_samples = 2  # Minimum samples per class
-valid_classes = [cls for cls, count in class_distribution.items() if count >= min_samples]
-mask = np.isin(y_windows, valid_classes)
-X_windows_reshaped = X_windows_reshaped[mask]
-y_windows = y_windows[mask]
+X_train_raw = X_windows[train_idx]
+X_test_raw = X_windows[test_idx]
+y_train = y_windows[train_idx]
+y_test = y_windows[test_idx]
 
-# Check the new class distribution after filtering
-class_distribution_filtered = Counter(y_windows)
-print(f"Class distribution after filtering: {class_distribution_filtered}")
+imputer = SimpleImputer(strategy="mean")
+scaler = StandardScaler()
 
-# Use RandomOverSampler first to handle very imbalanced classes
-ros = RandomOverSampler(random_state=42)
-X_resampled, y_resampled = ros.fit_resample(X_windows_reshaped, y_windows)
+X_train_imputed = imputer.fit_transform(X_train_raw)
+X_test_imputed = imputer.transform(X_test_raw)
 
-# Use SMOTE to balance the classes
+X_train_scaled = scaler.fit_transform(X_train_imputed)
+X_test_scaled = scaler.transform(X_test_imputed)
+
 smote = SMOTE(random_state=42)
-X_balanced, y_balanced = smote.fit_resample(X_resampled, y_resampled)
+X_train_balanced, y_train_balanced = smote.fit_resample(X_train_scaled, y_train)
 
-# Reshape X_balanced back to the original window shape
-X_balanced = X_balanced.reshape(-1, window_size, n_features)
+class_distribution_filtered = Counter(y_train)
+class_distribution_balanced = Counter(y_train_balanced)
 
-# Check the new class distribution
-class_distribution_balanced = Counter(y_balanced)
-print(f"Class distribution after SMOTE in y_balanced: {class_distribution_balanced}")
-
-# Split the balanced data into train and test sets
-X_train, X_test, y_train, y_test = train_test_split(
-    X_balanced, y_balanced, test_size=0.3, random_state=42
-)
-
-# Calculate the average series length
-avg_series_length = np.mean([len(x) for x in X_train])
-
-# Initialize total start time
 total_start_time = time.time()
 
-# Start time measurement for train transformation
 start_time = time.time()
-kernels = generate_kernels(input_length=X_train.shape[1],
-                           num_kernels=10000,
-                           avg_series_length=int(X_train.shape[1]))
-X_train_reshaped = X_train.reshape(-1, X_train.shape[2])
-X_train_transformed, selector, best_num_features, scaler = transform_and_select_features(
-    X_train_reshaped, kernels, y_train.repeat(window_size), is_train=True)
+kernels = generate_kernels(
+    input_length=X_train_balanced.shape[1],
+    num_kernels=10000,
+    avg_series_length=int(X_train_balanced.shape[1]),
+)
+X_train_transformed, selector, best_num_features, feature_scaler = transform_and_select_features(
+    X_train_balanced,
+    kernels,
+    y=y_train_balanced,
+    num_features=500,
+    score_func=scorers["mi"],
+    is_train=True,
+)
 train_transform_time = time.time() - start_time
 
-# Ensure y_train and X_train_transformed have consistent lengths
-y_train_corrected = y_train.repeat(X_train_transformed.shape[0] // y_train.shape[0])
-
-# training transform + FS
-Xtr, sel, k, scl = transform_and_select_features(
-    X_train, kernels,
-    y=y_train,
-    num_features=500,
-    score_func=scorers["mi"],     # <-- chi2 | mi | anova
-    is_train=True
-)
-# Train classifier
 start_time = time.time()
 classifier = RidgeClassifierCV(alphas=np.logspace(-3, 3, 10))
-classifier.fit(X_train_transformed, y_train_corrected)
+classifier.fit(X_train_transformed, y_train_balanced)
 training_time = time.time() - start_time
 
-# Start time measurement for test transformation
 start_time = time.time()
-X_test_reshaped = X_test.reshape(-1, X_test.shape[2])
 X_test_transformed = transform_and_select_features(
-    X_test_reshaped, kernels, selector=selector, scaler=scaler, is_train=False)
+    X_test_scaled,
+    kernels,
+    selector=selector,
+    scaler=feature_scaler,
+    is_train=False,
+)
 test_transform_time = time.time() - start_time
 
-# Ensure y_test and X_test_transformed have consistent lengths
-y_test_corrected = y_test.repeat(X_test_transformed.shape[0] // y_test.shape[0])
-# test transform
-Xte = transform_and_select_features(
-    X_test, kernels,
-    selector=sel, scaler=scl,
-    is_train=False
-)
-# Test classifier
 start_time = time.time()
 predictions = classifier.predict(X_test_transformed)
 test_time = time.time() - start_time
-accuracy = np.mean(predictions == y_test_corrected)
+accuracy = accuracy_score(y_test, predictions)
 
-# Print the results
-print(f'Accuracy: {accuracy}')
-print(f'Number of Features: {best_num_features}')  # Print number of features used
-print(f'Training Transformation Time: {train_transform_time}s')
-print(f'Training Time: {training_time}s')
-print(f'Test Transformation Time: {test_transform_time}s')
-print(f'Test Time: {test_time}s')
+print(f"Accuracy: {accuracy}")
+print(f"Number of Features: {best_num_features}")
+print(f"Training Transformation Time: {train_transform_time}s")
+print(f"Training Time: {training_time}s")
+print(f"Test Transformation Time: {test_transform_time}s")
+print(f"Test Time: {test_time}s")
 
-# Calculate total time
 total_time = time.time() - total_start_time
-print(f'Total time: {total_time}s')
+print(f"Total time: {total_time}s")
 
-
-# 1. Plot Class Distribution Before and After Balancing
-
-# Before balancing
 fig, axes = plt.subplots(1, 2, figsize=(14, 6))
-sns.barplot(x=list(class_distribution_filtered.keys()), y=list(class_distribution_filtered.values()), ax=axes[0])
-axes[0].set_title('Class Distribution Before Balancing')
-axes[0].set_xlabel('Class')
-axes[0].set_ylabel('Frequency')
+sns.barplot(
+    x=list(class_distribution_filtered.keys()),
+    y=list(class_distribution_filtered.values()),
+    ax=axes[0],
+)
+axes[0].set_title("Train Class Distribution Before Balancing")
+axes[0].set_xlabel("Class")
+axes[0].set_ylabel("Frequency")
 
-# After SMOTE
-sns.barplot(x=list(class_distribution_balanced.keys()), y=list(class_distribution_balanced.values()), ax=axes[1])
-axes[1].set_title('Class Distribution After SMOTE Balancing')
-axes[1].set_xlabel('Class')
-axes[1].set_ylabel('Frequency')
+sns.barplot(
+    x=list(class_distribution_balanced.keys()),
+    y=list(class_distribution_balanced.values()),
+    ax=axes[1],
+)
+axes[1].set_title("Train Class Distribution After SMOTE")
+axes[1].set_xlabel("Class")
+axes[1].set_ylabel("Frequency")
 
 plt.tight_layout()
 plt.show()
 
-# 2. Plot Time Spent on Each Step vs Accuracy
-
-# Creating a bar plot for timing
 timing_data = {
-    'Stage': ['Train Transformation', 'Training', 'Test Transformation', 'Testing'],
-    'Time (s)': [train_transform_time, training_time, test_transform_time, test_time]
+    "Stage": ["Train Transformation", "Training", "Test Transformation", "Testing"],
+    "Time (s)": [train_transform_time, training_time, test_transform_time, test_time],
 }
 
 timing_df = pd.DataFrame(timing_data)
-
 fig, ax1 = plt.subplots(figsize=(10, 6))
-sns.barplot(x='Stage', y='Time (s)', data=timing_df, ax=ax1)
-ax1.set_title('Time Spent on Each Stage')
+sns.barplot(x="Stage", y="Time (s)", data=timing_df, ax=ax1)
+ax1.set_title("Time Spent on Each Stage")
 
-# Overlay accuracy as a separate plot
 ax2 = ax1.twinx()
-ax2.plot(timing_df['Stage'], [accuracy]*4, color='red', marker='o', label='Accuracy')
-ax2.set_ylabel('Accuracy')
+ax2.plot(timing_df["Stage"], [accuracy] * 4, color="red", marker="o", label="Accuracy")
+ax2.set_ylabel("Accuracy")
 ax2.set_ylim(0, 1)
-ax2.legend(loc='upper left')
+ax2.legend(loc="upper left")
 
 plt.tight_layout()
 plt.show()
 
-# 3. Plot the Number of Features Used After Selection
-
 plt.figure(figsize=(8, 6))
-sns.barplot(x=['Selected Features'], y=[best_num_features])
-plt.title('Number of Features Used After Selection')
-plt.ylabel('Number of Features')
+sns.barplot(x=["Selected Features"], y=[best_num_features])
+plt.title("Number of Features Used After Selection")
+plt.ylabel("Number of Features")
 plt.show()
-
-
